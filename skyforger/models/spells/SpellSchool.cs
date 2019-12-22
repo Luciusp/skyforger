@@ -4,6 +4,7 @@ namespace skyforger.models
 {
     public enum SpellSchool
     {
+        None,
         Abjuration,
         Chronomancy,
         Conjuration,

@@ -2,6 +2,7 @@ namespace skyforger.models
 {
     public enum Action
     {
+        None,
         Swift,
         Standard,
         Immediate,

@@ -2,6 +2,7 @@ namespace skyforger.models
 {
     public enum SpellDescriptor
     {
+        None,
         Acid,
         Air,
         Chaotic,

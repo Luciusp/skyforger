@@ -2,6 +2,9 @@ namespace skyforger.models
 {
     public enum SpellSubSchool
     {
+        //Catch-all
+        None,
+        
         //Conjuration
         Calling,
         Creation,

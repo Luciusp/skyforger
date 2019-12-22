@@ -4,7 +4,8 @@ namespace skyforger.models.spells
 {
     public class Spell
     {
-        public ManaType Mana { get; set; }
+        public string Name { get; set; }
+        public ManaType[] Mana { get; set; }
         public int SpellLevel { get; set; }
         public SpellSchool School { get; set; }
         public SpellSubSchool SubSchool { get; set; }
