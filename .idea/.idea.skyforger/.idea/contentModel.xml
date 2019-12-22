@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$USER_HOME$/.Rider2019.2/system/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.Rider2019.2/system/resharper-host/local/Transient/ReSharperHost/v192/SolutionCaches/_skyforger.-1762466846.00" t="ExcludeRecursive" />
+    <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="skyforger" t="IncludeRecursive">
+        <e p="Controllers" t="Include">
+          <e p="GeneratorController.cs" t="Include" />
+        </e>
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="launchSettings.json" t="Include" />
+        </e>
+        <e p="Startup.cs" t="Include" />
+        <e p="appsettings.Development.json" t="Include" />
+        <e p="appsettings.json" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="models" t="Include">
+          <e p="Character.cs" t="Include" />
+          <e p="CharacterClass.cs" t="Include" />
+          <e p="CharacterRace.cs" t="Include" />
+          <e p="common" t="Include">
+            <e p="Action.cs" t="Include" />
+            <e p="ManaType.cs" t="Include" />
+            <e p="Statblock.cs" t="Include" />
+          </e>
+          <e p="creatures" t="Include">
+            <e p="CreatureAlignment.cs" t="Include" />
+            <e p="CreatureSize.cs" t="Include" />
+            <e p="CreatureSubType.cs" t="Include" />
+            <e p="CreatureType.cs" t="Include" />
+          </e>
+          <e p="spells" t="Include">
+            <e p="Spell.cs" t="Include" />
+            <e p="SpellComponent.cs" t="Include" />
+            <e p="SpellDescriptor.cs" t="Include" />
+            <e p="SpellSchool.cs" t="Include" />
+            <e p="SpellSubSchool.cs" t="Include" />
+          </e>
+        </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="skyforger.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="skyforger.csproj" t="IncludeRecursive" />
+      </e>
+      <e p="skyforger.sln" t="IncludeFlat" />
+    </e>
+  </component>
+</project>

@@ -11,11 +11,6 @@ namespace skyforger.Controllers
     [Route("[controller]")]
     public class GeneratorController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<GeneratorController> _logger;
 
         public GeneratorController(ILogger<GeneratorController> logger)
@@ -27,14 +22,7 @@ namespace skyforger.Controllers
         [Route("test")]
         public async Task<ActionResult> Test()
         {
-            var rng = new Random();
-            return Ok(Enumerable.Range(1, 5).Select(index => new WeatherForecast
-                {
-                    Date = DateTime.Now.AddDays(index),
-                    TemperatureC = rng.Next(-20, 55),
-                    Summary = Summaries[rng.Next(Summaries.Length)]
-                })
-                .ToArray());
+            return Ok();
         }
     }
 }

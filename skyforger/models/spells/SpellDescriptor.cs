@@ -1,0 +1,41 @@
+namespace skyforger.models
+{
+    public enum SpellDescriptor
+    {
+        Acid,
+        Air,
+        Chaotic,
+        Cold,
+        Curse,
+        Darkness,
+        Death,
+        Disease,
+        Draconic,
+        Earth,
+        Electricity,
+        Emotion,
+        Evil,
+        Fairy,
+        Fear,
+        Fire,
+        Force,
+        Good,
+        Glyph,
+        Language_Dependent,
+        Lawful,
+        Light,
+        Maneuver,
+        Mind_Affecting,
+        Pain,
+        Poison,
+        Profane,
+        Runic,
+        Sacred,
+        Shadow,
+        Sonic,
+        Spirit,
+        Symbol,
+        Water,
+        Wild
+    }
+}
