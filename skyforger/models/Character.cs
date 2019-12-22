@@ -1,3 +1,4 @@
+using System;
 using skyforger.models.common;
 using skyforger.models.creatures;
 using skyforger.models.spells;
@@ -6,11 +7,29 @@ namespace skyforger.models
 {
     public class Character
     {
-        public Character()
+        public Character(GeneratorQuery query = null)
         {
+            if (query == null)
+            {
+                var random = new Random();
+                var alignmentvals = Enum.GetValues(typeof(CreatureAlignment));
+                var manatypevals = Enum.GetValues(typeof(ManaType));
+                query = new GeneratorQuery()
+                {
+                    Name = string.Empty, //TODO: pull name from random generator of type
+                    Race = string.Empty, //TODO: pull race from db
+                    Class = string.Empty, //TODO: pull class from db
+                    ManaType = (ManaType)manatypevals.GetValue(random.Next(manatypevals.Length)),
+                    Alignment = (CreatureAlignment)alignmentvals.GetValue(random.Next(alignmentvals.Length)),
+                    Level = random.Next(1, 20),
+                    BasePoints = 36
+                };
+            }
             
+            CalculateAllTheThings(query);
         }
         
+        public string Name { get; set; }
         public CharacterRace Race { get; set; }
         public CreatureType Type { get; set; }
         public CreatureSubType SubType { get; set; }
@@ -45,7 +64,7 @@ namespace skyforger.models
         public int MediumLoad { get; set; }
         public int HeavyLoad { get; set; }
         
-        private void CalculateAllTheThings()
+        private void CalculateAllTheThings(GeneratorQuery query)
         {
             //potentially not randoms:
             //pick race

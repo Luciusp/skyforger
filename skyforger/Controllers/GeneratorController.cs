@@ -25,11 +25,12 @@ namespace skyforger.Controllers
 
         [HttpPost]
         [Route("")]
-        public async Task<ActionResult> Generate([FromBody] JsonElement query)
+        public async Task<IActionResult> Generate([FromBody] JsonElement query)
         {
             try
             {
                 var json = JsonConvert.DeserializeObject<GeneratorQuery>(query.ToString());
+                return Ok(new Character(json));
             }
             catch (JsonSerializationException jse)
             {

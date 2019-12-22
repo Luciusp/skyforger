@@ -1,10 +1,10 @@
-using System;
 using skyforger.models.creatures;
 
 namespace skyforger.models
 {
     public class GeneratorQuery
     {
+        public string Name { get; set; }
         public string Race { get; set; }
         public string Class { get; set; }
         public ManaType ManaType { get; set; }

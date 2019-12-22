@@ -8,6 +8,7 @@
       <e p="skyforger" t="IncludeRecursive">
         <e p="Controllers" t="Include">
           <e p="GeneratorController.cs" t="Include" />
+          <e p="PortalSync.cs" t="Include" />
           <e p="StatusController.cs" t="Include" />
         </e>
         <e p="Program.cs" t="Include" />
