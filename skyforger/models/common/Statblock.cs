@@ -4,7 +4,7 @@ namespace skyforger.models
 {
     public class Statblock
     {
-        public Statblock(CharacterClass characterclass, CharacterRace characterrace)
+        public Statblock(CharacterClass characterclass, CharacterRace characterrace, int basepoints, int level)
         {
             
         }

@@ -8,12 +8,16 @@
       <e p="skyforger" t="IncludeRecursive">
         <e p="Controllers" t="Include">
           <e p="GeneratorController.cs" t="Include" />
+          <e p="StatusController.cs" t="Include" />
         </e>
         <e p="Program.cs" t="Include" />
         <e p="Properties" t="Include">
           <e p="launchSettings.json" t="Include" />
         </e>
         <e p="Startup.cs" t="Include" />
+        <e p="Utilities" t="Include">
+          <e p="LevenshteinDistance.cs" t="Include" />
+        </e>
         <e p="appsettings.Development.json" t="Include" />
         <e p="appsettings.json" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
@@ -21,16 +25,28 @@
           <e p="Character.cs" t="Include" />
           <e p="CharacterClass.cs" t="Include" />
           <e p="CharacterRace.cs" t="Include" />
+          <e p="GeneratorQuery.cs" t="Include" />
           <e p="common" t="Include">
             <e p="Action.cs" t="Include" />
+            <e p="Feat.cs" t="Include" />
+            <e p="Languages.cs" t="Include" />
             <e p="ManaType.cs" t="Include" />
             <e p="Statblock.cs" t="Include" />
+            <e p="Trait.cs" t="Include" />
           </e>
           <e p="creatures" t="Include">
             <e p="CreatureAlignment.cs" t="Include" />
+            <e p="CreatureEquipmentSlots.cs" t="Include" />
+            <e p="CreatureSaves.cs" t="Include" />
             <e p="CreatureSize.cs" t="Include" />
             <e p="CreatureSubType.cs" t="Include" />
             <e p="CreatureType.cs" t="Include" />
+          </e>
+          <e p="equipment" t="Include">
+            <e p="Armor.cs" t="Include" />
+            <e p="Item.cs" t="Include" />
+            <e p="MagicItem.cs" t="Include" />
+            <e p="Weapon.cs" t="Include" />
           </e>
           <e p="spells" t="Include">
             <e p="Spell.cs" t="Include" />

@@ -1,0 +1,40 @@
+namespace skyforger.models.common
+{
+    public enum Languages
+    {
+        Aboleth,
+        Abyssal,
+        Aklo,
+        Aquan,
+        Auran,
+        Boggard,
+        Celestial,
+        Common,
+        Cyclops,
+        Dark_Folk,
+        Draconic,
+        Drow_Sign_Language,
+        Druidic,
+        Dwarven,
+        Dziriak,
+        Elven,
+        Giant,
+        Gnoll,
+        Gnome,
+        Goblin,
+        Grippli,
+        Halfling,
+        Ignan,
+        Infernal,
+        Necril,
+        Orc,
+        Protean,
+        Sphinx,
+        Sylvan,
+        Tengu,
+        Terran,
+        Treant,
+        Undercommon,
+        Vegepygmy
+    }
+}
