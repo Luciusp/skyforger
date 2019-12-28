@@ -26,12 +26,17 @@
           <e p="Character.cs" t="Include" />
           <e p="CharacterClass.cs" t="Include" />
           <e p="CharacterRace.cs" t="Include" />
+          <e p="Error.cs" t="Include" />
           <e p="GeneratorQuery.cs" t="Include" />
           <e p="common" t="Include">
-            <e p="Action.cs" t="Include" />
+            <e p="ActionType.cs" t="Include" />
+            <e p="DurationType.cs" t="Include" />
             <e p="Feat.cs" t="Include" />
             <e p="Languages.cs" t="Include" />
             <e p="ManaType.cs" t="Include" />
+            <e p="RangeType.cs" t="Include" />
+            <e p="SavingThrow.cs" t="Include" />
+            <e p="SpellResistantType.cs" t="Include" />
             <e p="Statblock.cs" t="Include" />
             <e p="Trait.cs" t="Include" />
           </e>
@@ -51,8 +56,11 @@
           </e>
           <e p="spells" t="Include">
             <e p="Spell.cs" t="Include" />
+            <e p="SpellAction.cs" t="Include" />
             <e p="SpellComponent.cs" t="Include" />
             <e p="SpellDescriptor.cs" t="Include" />
+            <e p="SpellDuration.cs" t="Include" />
+            <e p="SpellRange.cs" t="Include" />
             <e p="SpellSchool.cs" t="Include" />
             <e p="SpellSubSchool.cs" t="Include" />
           </e>

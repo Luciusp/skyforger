@@ -12,6 +12,7 @@ namespace skyforger.models
         Black,
         Blue,
         Red,
-        Green
+        Green,
+        See_Text
     }
 }

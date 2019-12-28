@@ -41,7 +41,6 @@ namespace skyforger.Controllers
                 return BadRequest(ex.Message);
             }
             
-            return Ok();
         }
 
         //parses error message "Error converting value ..." and attempts to make suggestions

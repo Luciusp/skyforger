@@ -4,6 +4,7 @@ namespace skyforger.models
     {
         //Catch-all
         None,
+        See_Text,
         
         //Conjuration
         Calling,

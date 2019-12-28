@@ -14,6 +14,7 @@ namespace skyforger.models
         Illusion,
         Necromancy,
         Sangromancy,
+        See_Text,
         Transmutation
     }
 }
