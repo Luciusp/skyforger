@@ -5,6 +5,9 @@ namespace skyforger.models
         None,
         Verbal,
         Somatic,
-        Material
+        Material,
+        Focus,
+        Divine_Focus,
+        See_Text
     }
 }
