@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using skyforger.models;
+using skyforger.models.common;
 using skyforger.models.spells;
 
 namespace skyforger.Controllers
@@ -190,23 +191,6 @@ namespace skyforger.Controllers
                 {
                     spell.School.Add((SpellSchool)Enum.Parse(typeof(SpellSchool), school, true));
                 }
-
-                try
-                {
-                    var descriptorexists = Enum.TryParse(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(
-                        Regex.Replace(schoolinfo.Split(" ")[1], "(?:[^a-zA-Z0-9 ]|(?<=['\"])s)", 
-                            string.Empty, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | 
-                                          RegexOptions.Compiled)), out SpellDescriptor descriptor);
-//                    if (descriptorexists)
-//                        spell.Descriptor = descriptor;
-                    
-                    //var subschoolexists
-                }
-                catch(Exception ex)
-                {
-                    _logger.LogError(ex.Message);
-                }
-                
             }
             
             //Components. Can be divine focus/focus. See smn monstr 1
@@ -289,21 +273,36 @@ namespace skyforger.Controllers
                 _logger.LogWarning($"Mana information malformed for spell {spelluri}");
             else
             {
-                var manatypes = manainfo.Split(" ").Where(t => Enum.GetNames(typeof(ManaType)).Contains(t.Trim())).ToList();
-                if (manatypes == null)
-                    _logger.LogWarning($"Mana type missing for spell {spelluri}");
-                else
+                var tags = new Regex("data-tag=\".*?\"").Matches(spellhtml);
+                for (int i = 0; i < tags.Count; i++)
                 {
-                    foreach (var manatype in manatypes)
+                    var manaexists = Enum.TryParse(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(tags[i].Value
+                            .Replace("data-tag=", "")
+                            .Replace("\"","").Trim().ToLower()), 
+                        out ManaType mana);
+
+                    if (manaexists)
                     {
-                        var manaexists = Enum.TryParse(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(manatype), 
-                            out ManaType mana);
-                        
-                        if (manaexists)
-                            spell.Mana.Add(mana);
-                        else _logger.LogWarning($"Invalid manatype for spell {spelluri}");
+                        spell.Mana.Add(mana);
+                        continue;
                     }
+                        
+                    //some spells are mono + multi or mono + diverse. Mono isn't a tag, so that will need to be calculated elsewhere
+                    var othertag = tags[i].Value.Replace("data-tag=", "").Replace("\"", "")
+                        .Replace("-", "_").Replace(" ", "_").ToLower();
+                    
+                    var manaclassexists = Enum.TryParse(othertag, true,
+                        out ManaClass manaclass);
+                    
+                    if (manaclassexists)
+                        spell.ManaClass.Add(manaclass);
                 }
+                
+                //determine if spell has more than one class
+                var multimana = new Regex(@"([Rr]ed|[Gg]reen|[Ww]hite|[Bb]lue|[Bb]lack)(\/.*(?=\s))").Matches(spellinfo);
+                
+                
+                //copy actual mana rawdescription
 
                 //set spell level to something absurd so I can catch ones that don't have a level assigned
                 int level = 9000;

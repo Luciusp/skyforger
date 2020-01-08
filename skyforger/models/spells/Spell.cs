@@ -9,6 +9,7 @@ namespace skyforger.models.spells
         public Spell()
         {
             Mana = new List<ManaType>();
+            ManaClass = new List<ManaClass>();
             School = new List<SpellSchool>();
             SubSchool = new List<SpellSubSchool>();
             Components = new List<SpellComponent>();
@@ -25,6 +26,8 @@ namespace skyforger.models.spells
         public int IdHash { get; set; }
         public string Name { get; set; }
         public List<ManaType> Mana { get; set; }
+        public List<ManaClass> ManaClass { get; set; }
+        public string ManaDescription { get; set; }
         public int SpellLevel { get; set; }
         public List<SpellSchool> School { get; set; }
         public List<SpellSubSchool> SubSchool { get; set; }

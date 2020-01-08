@@ -33,6 +33,7 @@
             <e p="DurationType.cs" t="Include" />
             <e p="Feat.cs" t="Include" />
             <e p="Languages.cs" t="Include" />
+            <e p="ManaClass.cs" t="Include" />
             <e p="ManaType.cs" t="Include" />
             <e p="RangeType.cs" t="Include" />
             <e p="SavingThrow.cs" t="Include" />
