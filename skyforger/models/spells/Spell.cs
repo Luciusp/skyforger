@@ -17,10 +17,10 @@ namespace skyforger.models.spells
             Focus = new List<string>();
             Descriptor = new List<SpellDescriptor>();
             Action = new List<SpellAction>();
-            Range = new List<SpellRange>();
-            Duration = new List<DurationType>();
-            SavingThrow = new List<SavingThrow>();
-            SpellResistance = new List<SpellResistantType>();
+            //Range = new List<SpellRange>();
+            //Duration = new List<DurationType>();
+            //SavingThrow = new List<SavingThrow>();
+            //SpellResistance = new List<SpellResistantType>();
         }
 
         public int IdHash { get; set; }
@@ -36,11 +36,16 @@ namespace skyforger.models.spells
         public List<string> Focus { get; set; }
         public List<SpellDescriptor> Descriptor { get; set; }
         public List<SpellAction> Action { get; set; }
-        public List<SpellRange> Range { get; set; }
+        //public List<SpellRange> Range { get; set; }
+        public string Range { get; set; }
         public string Target { get; set; }
-        public List<DurationType> Duration { get; set; }
-        public List<SavingThrow> SavingThrow { get; set; }
-        public List<SpellResistantType> SpellResistance { get; set; }
+        //public List<DurationType> Duration { get; set; }
+        public string Duration { get; set; }
+
+        public string SavingThrow { get; set; }
+        //public List<SavingThrow> SavingThrow { get; set; }
+        //public List<SpellResistantType> SpellResistance { get; set; }
+        public string SpellResistance { get; set; }
         public string SpellUri { get; set; }
         public string Description { get; set; }
     }

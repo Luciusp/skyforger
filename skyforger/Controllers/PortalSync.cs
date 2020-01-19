@@ -37,17 +37,18 @@ namespace skyforger.Controllers
         [Route("")]
         public async Task<IActionResult> FullSync()
         {
-            await ScrapeSpells();
+            var spells = await ScrapeSpells();
             return Ok();
         }
-        
-        private async Task ScrapeSpells()
+
+        private async Task<List<Spell>> ScrapeSpells()
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, 
+            var spelllist = new List<Spell>();
+            using var request = new HttpRequestMessage(HttpMethod.Get,
                 $"{_config["ObsidianPortal:BaseURI"]}/" +
                 $"{_config["ObsidianPortal:SpellsHub"]}");
             using var client = _httpfactory.CreateClient();
-            
+
             var response = await client.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();
 
@@ -57,7 +58,7 @@ namespace skyforger.Controllers
 
             for (int i = 0; i < match.Count; i++)
             {
-                using var colorspellhubreq = new HttpRequestMessage(HttpMethod.Get, 
+                using var colorspellhubreq = new HttpRequestMessage(HttpMethod.Get,
                     $"{_config["ObsidianPortal:BaseURI"]}/" +
                     $"{match[i].Value}");
                 using var spellhubclient = _httpfactory.CreateClient();
@@ -76,12 +77,13 @@ namespace skyforger.Controllers
 
                     if (spellendpoint == string.Empty)
                         continue;
-                    
-                    //var spelluri = $"{_config["ObsidianPortal:BaseURI"]}{spellendpoint}";
+
+                    var spelluri = $"{_config["ObsidianPortal:BaseURI"]}{spellendpoint}";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/lesser-orb-of-cold";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/gate";
-                    var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/clone";
+                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/clone";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/forced-repentance";
+                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/martyrs-last-blessing";
 
                     using var spellreq = new HttpRequestMessage(HttpMethod.Get, spelluri);
                     using var spellclient = _httpfactory.CreateClient();
@@ -89,15 +91,16 @@ namespace skyforger.Controllers
                     var spellres = await spellclient.SendAsync(spellreq);
                     var spellcontent = await spellres.Content.ReadAsStringAsync();
                     
-                    var test = TransposeSpell(spellcontent, spelluri);
-                    Console.WriteLine("done!");
+                    spelllist.Add(await TransposeSpell(spellcontent, spelluri));
                 }
             }
+
+            return spelllist;
         }
 
-        private Spell TransposeSpell(string spellhtml, string spelluri)
+        private async Task<Spell> TransposeSpell(string spellhtml, string spelluri)
         {
-            
+
             /*
              * We're pulling out something that looks like this:
              *  <div itemprop='text'>
@@ -118,20 +121,20 @@ namespace skyforger.Controllers
 	                <p>A small burning ember launches from your pointing finger. You must succeed on a ranged touch attack with the ember to deal damage to a target. The ember deals 1d3 points of fire damage. This spell cannot catch objects on fire.</p>
                 </div>
              */
-            
+
             //WARNING, multimana spells will show up multiple times on different spell lists. Avoid double counting.
             var spell = new Spell();
-            
+
             //set spell uri
             spell.SpellUri = spelluri;
-            
+
             //set spell name
             var spellnameregex = new Regex(@"<title>.* \| Skies of Glass \| Obsidian Portal<\/title>");
-            spell.Name = spellnameregex.Match(spellhtml).Value.Split(" |")[0].Replace("<title>","");
+            spell.Name = spellnameregex.Match(spellhtml).Value.Split(" |")[0].Replace("<title>", "");
 
             using var md5 = MD5.Create();
             spell.IdHash = Math.Abs(BitConverter.ToInt32(md5.ComputeHash(Encoding.UTF8.GetBytes(spell.Name)), 0));
-            
+
             //TODO: look for spellid hash for dupes. Log collisions
 
             /*get entry starting with spellname. Split on <li>, skip the first entry because
@@ -142,9 +145,9 @@ namespace skyforger.Controllers
 
             var spelldetails = spellinfo.Split("<ul>")[1].Split("<li>")
                 .Skip(1)
-                .Select(t => t.Substring(0,t.IndexOf("</li>", StringComparison.Ordinal))).ToList();
-            
-            
+                .Select(t => t.Substring(0, t.IndexOf("</li>", StringComparison.Ordinal))).ToList();
+
+
             //search all spelldetails for school and match against spellschool enum to see if there are any matches
             var schoolinfo = spelldetails.FirstOrDefault(t => t.Split(" ").Any(x => Enum.GetNames(typeof(SpellSchool))
                 .ToList().Contains(x)));
@@ -157,7 +160,7 @@ namespace skyforger.Controllers
             {
                 //get stuff surrounded by brackets
                 var subschools = Regex.Match(schoolinfo, @"\((.*?)\)").Value;
-                
+
                 //get stuff surrounded by parentheses
                 var descriptors = Regex.Match(schoolinfo, @"\[(.*?)\]").Value;
 
@@ -169,7 +172,8 @@ namespace skyforger.Controllers
                     var splitsubschools = subschools.Replace("(", "").Replace(")", "").Split(" or ");
                     foreach (var subsschoolentry in splitsubschools)
                     {
-                        spell.SubSchool.Add((SpellSubSchool)Enum.Parse(typeof(SpellSubSchool), subsschoolentry.Trim(), true));
+                        spell.SubSchool.Add((SpellSubSchool) Enum.Parse(typeof(SpellSubSchool), subsschoolentry.Trim(),
+                            true));
                     }
                 }
 
@@ -180,19 +184,19 @@ namespace skyforger.Controllers
                     //insert descriptors
                     foreach (var descriptorentry in splitdescriptors)
                     {
-                        spell.Descriptor.Add((SpellDescriptor)Enum.Parse(typeof(SpellDescriptor), 
+                        spell.Descriptor.Add((SpellDescriptor) Enum.Parse(typeof(SpellDescriptor),
                             descriptorentry.Trim().Replace(" ", "_").Replace("-", "_"), true));
                     }
                 }
-            
+
                 //insert schools
                 var schools = schoolinfo.Trim().Split("/");
                 foreach (var school in schools)
                 {
-                    spell.School.Add((SpellSchool)Enum.Parse(typeof(SpellSchool), school, true));
+                    spell.School.Add((SpellSchool) Enum.Parse(typeof(SpellSchool), school, true));
                 }
             }
-            
+
             //Components. Can be divine focus/focus. See smn monstr 1
             var componentinfo = spelldetails.FirstOrDefault(t => t.Contains("Components"));
             if (componentinfo == null)
@@ -200,7 +204,7 @@ namespace skyforger.Controllers
             else
             {
                 var components = componentinfo.Replace("Components", "").Replace(":", "");
-                
+
                 //hand verbal and somatic since they're easy. different approach for material and focus/df
                 var componentsplit = components.Split(",");
                 for (int i = 0; i < componentsplit.Length; i++)
@@ -225,16 +229,19 @@ namespace skyforger.Controllers
                     for (int i = 0; i < materialmatches.Count; i++)
                     {
                         var materialcomponent = materialmatches[i].Value.Replace("M (", "").Replace(")", "");
-                        spell.MaterialComponents.Add(char.ToUpper(materialcomponent.First()) + materialcomponent.Substring(1));
+                        spell.MaterialComponents.Add(char.ToUpper(materialcomponent.First()) +
+                                                     materialcomponent.Substring(1));
                     }
                 }
-                
-                var focusmatches = new Regex(@"([fF]|DF|df|F\/DF|f\/df|DF\/F|df\/f)[\s]{0,1}\((.*?)\)").Matches(components);
+
+                var focusmatches =
+                    new Regex(@"([fF]|DF|df|F\/DF|f\/df|DF\/F|df\/f)[\s]{0,1}\((.*?)\)").Matches(components);
                 if (focusmatches.Any())
                 {
                     for (int i = 0; i < focusmatches.Count; i++)
                     {
-                        var focustype = new Regex(@"([fF]|DF|df|F\/DF|f\/df|DF\/F|df\/f)[\s]{0,1}\(").Match(focusmatches[i].Value)
+                        var focustype = new Regex(@"([fF]|DF|df|F\/DF|f\/df|DF\/F|df\/f)[\s]{0,1}\(")
+                            .Match(focusmatches[i].Value)
                             .Value.Replace("(", "").Trim().ToLower();
                         switch (focustype)
                         {
@@ -247,17 +254,19 @@ namespace skyforger.Controllers
                                 spell.Components.Add(SpellComponent.Focus);
                                 break;
                             case "df/f":
-                            case "df/focus": 
-                            case "divinefocus/f": 
-                            case "f/df": 
-                            case "focus/df": 
+                            case "df/focus":
+                            case "divinefocus/f":
+                            case "f/df":
+                            case "focus/df":
                             case "focus/divinefocus":
                                 spell.Components.Add(SpellComponent.Focus);
                                 spell.Components.Add(SpellComponent.Divine_Focus);
                                 break;
-                                
+
                         }
-                        var focus = new Regex(@"\((.*?)\)").Match(focusmatches[i].Value).Value.Replace("(", "").Replace(")", "");
+
+                        var focus = new Regex(@"\((.*?)\)").Match(focusmatches[i].Value).Value.Replace("(", "")
+                            .Replace(")", "");
                         if (string.IsNullOrEmpty(focus))
                             _logger.LogWarning($"Spell with Focus is missing Focus description: {spell.SpellUri}");
                         else spell.Focus.Add(char.ToUpper(focus.First()) + focus.Substring(1));
@@ -278,7 +287,7 @@ namespace skyforger.Controllers
                 {
                     var manaexists = Enum.TryParse(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(tags[i].Value
                             .Replace("data-tag=", "")
-                            .Replace("\"","").Trim().ToLower()), 
+                            .Replace("\"", "").Trim().ToLower()),
                         out ManaType mana);
 
                     if (manaexists)
@@ -286,39 +295,180 @@ namespace skyforger.Controllers
                         spell.Mana.Add(mana);
                         continue;
                     }
-                        
+
                     //some spells are mono + multi or mono + diverse. Mono isn't a tag, so that will need to be calculated elsewhere
                     var othertag = tags[i].Value.Replace("data-tag=", "").Replace("\"", "")
                         .Replace("-", "_").Replace(" ", "_").ToLower();
-                    
+
                     var manaclassexists = Enum.TryParse(othertag, true,
                         out ManaClass manaclass);
-                    
+
                     if (manaclassexists)
                         spell.ManaClass.Add(manaclass);
                 }
-                
+
                 //determine if spell has more than one class
-                var multimana = new Regex(@"([Rr]ed|[Gg]reen|[Ww]hite|[Bb]lue|[Bb]lack)(\/.*(?=\s))").Matches(spellinfo);
-                
-                
-                //copy actual mana rawdescription
+                var multimana =
+                    new Regex(@"([Rr]ed|[Gg]reen|[Ww]hite|[Bb]lue|[Bb]lack)(\/.*?(?=\s))").Matches(manainfo);
+                if (multimana.Any())
+                {
+                    var temp = manainfo;
+                    for (int i = 0; i < multimana.Count; i++)
+                    {
+                        temp = manainfo.Replace(multimana[i].Value, "");
+                    }
+
+                    if (temp.ToLower().Contains("or"))
+                    {
+                        spell.ManaClass.Add(ManaClass.Mono);
+                    }
+                }
+                if(!spell.ManaClass.Any())
+                    spell.ManaClass.Add(ManaClass.Mono);
 
                 //set spell level to something absurd so I can catch ones that don't have a level assigned
                 int level = 9000;
                 var levelexists = manainfo.Split(" ").Any(t => Int32.TryParse(t, out level));
-                if (levelexists)
+                if (!levelexists)
                     _logger.LogWarning($"Missing level info for spell {spelluri}");
                 else spell.SpellLevel = level;
+
+                //copy actual mana rawdescription
+                spell.ManaDescription =
+                    Regex.Replace(manainfo.Replace($" {level}", ""), @"[Ll]evel[:]{0,1}[\s]{0,1}", "");
+            }
+
+            //Description
+            spell.Description = Regex.Replace(spellinfo.Split("<p>")[1],
+                "<[^>]*>", string.Empty);
+
+            //Action
+            var actioninfo = spelldetails.FirstOrDefault(t => t.ToLower().StartsWith("casting time"));
+            if (!string.IsNullOrEmpty(actioninfo))
+            {
+                actioninfo = Regex.Replace(actioninfo, @"[Cc]asting[\s]{0,2}[Tt]ime[:]{0,2}[\s]{0,2}", "");
+                var pattern = await RegexFromEnum<ActionType>();
+                var actionreg = new Regex(pattern);
+                var actionmatches = actionreg.Matches(actioninfo);
+                
+                int anytimefactor = 0;
+                var timefactorexists = actioninfo.Split(" ").Any(t => Int32.TryParse(t, out anytimefactor));
+                if (!timefactorexists)
+                    _logger.LogWarning($"Missing timefactor action info for spell {spelluri}");
+                
+//                foreach (var aelement in actioninfo.Split(" "))
+//                {
+//                    int numresult = 0;
+//                    var isnum = Int32.TryParse(aelement, out numresult);
+//                    if (isnum)
+//                    {
+//                        actioninfo = Regex.Replace(actioninfo,$"{numresult.ToString()}[\\s]{{0,1}}", "");
+//                    }
+//                        
+//                }
+                
+                for (int i = 0; i < actionmatches.Count; i++)
+                {
+                    if (string.IsNullOrEmpty(actionmatches[i].Value))
+                        continue;
+                    var extractedaction = actionmatches[i].Value;
+                    var timefactormatch = Regex.Match(extractedaction, @"[\d]{0,1}[\s]{0,1}").Value;
+                    var timefactor = timefactormatch == null ? 0 : Int32.Parse(timefactormatch);
+                    if (timefactor != 0)
+                    {
+                        extractedaction = Regex.Replace(extractedaction,$"{timefactor.ToString()}[\\s]{{0,1}}", "");
+                    }
+                    var actionexists = Enum.TryParse(extractedaction.ToLower().Replace("action", "")
+                            .Replace("see text", "see_text").Trim(), true,
+                        out ActionType actionType);
+                    if (actionexists)
+                    {
+                        var action = new SpellAction()
+                        {
+                            Type = actionType,
+                            TimeFactor = timefactor
+                        };
+                        
+                        spell.Action.Add(action);
+                    }
+                } 
+            }
+
+            //Duration
+            var durationinfo = spelldetails.FirstOrDefault(t => t.ToLower().StartsWith("duration"));
+            if (!string.IsNullOrEmpty(durationinfo))
+            {
+                durationinfo = Regex.Replace(durationinfo, @"[Dd]uration[:]{0,2}[\s]{0,2}","");
+                spell.Duration = durationinfo;
+            }
+
+            //Range
+            var rangeinfo = spelldetails.FirstOrDefault(t => t.ToLower().StartsWith("range"));
+            if (!string.IsNullOrEmpty(rangeinfo))
+            {
+                rangeinfo = Regex.Replace(rangeinfo, @"[Rr]ange[:]{0,2}[\s]{0,2}","");
+                spell.Range = char.ToUpper(rangeinfo.First()) + rangeinfo.Substring(1);
+            }
+
+            //Saving Throw
+            var savingthrowinfo = spelldetails.FirstOrDefault(t => t.ToLower().StartsWith("saving throw"));
+            if (!string.IsNullOrEmpty(savingthrowinfo))
+            {
+                savingthrowinfo = Regex.Replace(savingthrowinfo, @"[Ss]aving[\s]{0,1}[Tt]hrow[:]{0,1}[\s]{0,1}", "");
+                spell.SavingThrow = char.ToUpper(savingthrowinfo.First()) + savingthrowinfo.Substring(1);
+            }
+
+            //Spell resistance
+            var spellresistanceinfo = spelldetails.FirstOrDefault(t => t.ToLower().StartsWith("spell resistance"));
+            if (!string.IsNullOrEmpty(spellresistanceinfo))
+            {
+                spellresistanceinfo = Regex.Replace(spellresistanceinfo,
+                    @"[Ss]pell[\s]{0,1}[Rr]esistance[:]{0,1}[\s]{0,1}", "");
+                spell.SpellResistance = char.ToUpper(spellresistanceinfo.First()) + spellresistanceinfo.Substring(1);
+            }
+
+            //Target
+            var targetinfo = spelldetails.FirstOrDefault(t => t.ToLower().StartsWith("target"));
+            if (!string.IsNullOrEmpty(targetinfo))
+            {
+                targetinfo = Regex.Replace(targetinfo, @"[Tt]arget[\s]{0,1}[:]{0,1}[\s]{0,1}", "");
+                spell.Target = char.ToUpper(targetinfo.First()) + targetinfo.Substring(1);
+            }
+
+            return spell;
+        }
+
+        private async Task<string> RegexFromEnum<T>()
+        {
+            var result = new StringBuilder();
+
+            foreach (var name in Enum.GetNames(typeof(T)))
+            {
+                var thisname = name.ToLower().Replace("_", " ");
+                switch (name.ToLower())
+                {
+                    case "swift":
+                    case "standard":
+                    case "immediate":
+                    case "move":
+                    case "fullround":
+                        thisname = $"{thisname} [Aa]ction";
+                        break;
+                }
+                var firstchar = thisname.First();
+                var firstcharcap = char.ToUpper(thisname.First());
+                var prepend = $"[{firstcharcap}{firstchar}]";
+                if (typeof(T).Name == "ActionType")
+                {
+                    result.Append(@"[\d]{0,1}[\s]{0,1}");
+                }
+                
+                result.Append($"{prepend}{thisname.Substring(1)}");
+                if (name != Enum.GetNames(typeof(T)).Last());
+                result.Append("|");
             }
             
-            //Action
-            
-            //Description
-            spell.Description = Regex.Replace(spellinfo.Split("<p>")[1], 
-                                                "<[^>]*>", string.Empty);
-            
-            return spell;
+            return result.ToString();
         }
     }
 }
