@@ -2,7 +2,7 @@ namespace skyforger.models
 {
     public enum SpellComponent
     {
-        None,
+        Null,
         Verbal,
         Somatic,
         Material,

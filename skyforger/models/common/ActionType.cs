@@ -2,14 +2,14 @@ namespace skyforger.models.common
 {
     public enum ActionType
     {
-        None,
+        Null,
         Swift,
         Standard,
         Immediate,
         Move,
         Round,
         Rounds,
-        FullRound,
+        Full_Round,
         Second,
         Seconds,
         Minute,

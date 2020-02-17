@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using skyforger.models.common;
 
 namespace skyforger.models.spells
@@ -29,6 +30,7 @@ namespace skyforger.models.spells
         public List<ManaClass> ManaClass { get; set; }
         public string ManaDescription { get; set; }
         public int SpellLevel { get; set; }
+        public string SchoolRaw { get; set; }
         public List<SpellSchool> School { get; set; }
         public List<SpellSubSchool> SubSchool { get; set; }
         public List<SpellComponent> Components { get; set; }
@@ -48,5 +50,7 @@ namespace skyforger.models.spells
         public string SpellResistance { get; set; }
         public string SpellUri { get; set; }
         public string Description { get; set; }
+        [JsonIgnore]
+        public bool Valid { get; set; }
     }
 }

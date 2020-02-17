@@ -32,6 +32,7 @@ namespace skyforger.models
         Profane,
         Runic,
         Sacred,
+        Scrying,
         See_Text,
         Shadow,
         Sonic,

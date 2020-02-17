@@ -4,14 +4,14 @@ namespace skyforger.models
 {
     public class Error
     {
-        public Error(dynamic type, string uri)
+        public Error(string type, string uri, List<string> errors)
         {
             Type = type;
             Uri = uri;
-            List = new List<string>();
+            Errors = errors;
         }
         public string Type { get; set; }
         public string Uri { get; set; }
-        public List<string> List { get; set; }
+        public List<string> Errors { get; set; }
     }
 }

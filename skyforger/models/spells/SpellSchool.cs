@@ -15,6 +15,7 @@ namespace skyforger.models
         Necromancy,
         Sangromancy,
         See_Text,
-        Transmutation
+        Transmutation,
+        Universal
     }
 }
