@@ -23,8 +23,8 @@ namespace skyforger.models.spells
             //SavingThrow = new List<SavingThrow>();
             //SpellResistance = new List<SpellResistantType>();
         }
-
-        public int IdHash { get; set; }
+        
+        public int Id { get; set; }
         public string Name { get; set; }
         public List<ManaType> Mana { get; set; }
         public List<ManaClass> ManaClass { get; set; }
@@ -43,7 +43,7 @@ namespace skyforger.models.spells
         public string Target { get; set; }
         //public List<DurationType> Duration { get; set; }
         public string Duration { get; set; }
-
+        public string Effect { get; set; }
         public string SavingThrow { get; set; }
         //public List<SavingThrow> SavingThrow { get; set; }
         //public List<SpellResistantType> SpellResistance { get; set; }

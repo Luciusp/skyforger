@@ -1,13 +1,15 @@
+using skyforger.models.spells;
+
 namespace skyforger.models
 {
-    public enum SpellComponent
+    public class SpellComponent
     {
-        Null,
-        Verbal,
-        Somatic,
-        Material,
-        Focus,
-        Divine_Focus,
-        See_Text
+        public SpellComponent(SpellComponentEnum spellcomponentenum)
+        {
+            SpellComponentEnum = spellcomponentenum;
+        }
+
+        public int Id { get; set; }
+        public SpellComponentEnum SpellComponentEnum { get; set; }
     }
 }

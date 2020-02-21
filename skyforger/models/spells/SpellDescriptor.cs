@@ -1,44 +1,15 @@
+using skyforger.models.spells;
+
 namespace skyforger.models
 {
-    public enum SpellDescriptor
+    public class SpellDescriptor
     {
-        None,
-        Acid,
-        Air,
-        Chaotic,
-        Cold,
-        Curse,
-        Darkness,
-        Death,
-        Disease,
-        Draconic,
-        Earth,
-        Electricity,
-        Emotion,
-        Evil,
-        Fairy,
-        Fear,
-        Fire,
-        Force,
-        Good,
-        Glyph,
-        Language_Dependent,
-        Lawful,
-        Light,
-        Maneuver,
-        Mind_Affecting,
-        Pain,
-        Poison,
-        Profane,
-        Runic,
-        Sacred,
-        Scrying,
-        See_Text,
-        Shadow,
-        Sonic,
-        Spirit,
-        Symbol,
-        Water,
-        Wild
+        public SpellDescriptor(SpellDescriptorEnum spelldescriptorenum)
+        {
+            SpellDescriptorEnum = spelldescriptorenum;
+        }
+
+        public int Id { get; set; }
+        public SpellDescriptorEnum SpellDescriptorEnum { get; set; }
     }
 }
