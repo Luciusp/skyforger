@@ -4,6 +4,10 @@ namespace skyforger.models
 {
     public class SpellSubSchool
     {
+        public SpellSubSchool()
+        {
+            
+        }
         public SpellSubSchool(SpellSubSchoolEnum spellsubschoolenum)
         {
             SpellSubSchoolEnum = spellsubschoolenum;

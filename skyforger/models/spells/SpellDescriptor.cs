@@ -4,6 +4,10 @@ namespace skyforger.models
 {
     public class SpellDescriptor
     {
+        public SpellDescriptor()
+        {
+            
+        }
         public SpellDescriptor(SpellDescriptorEnum spelldescriptorenum)
         {
             SpellDescriptorEnum = spelldescriptorenum;

@@ -4,6 +4,10 @@ namespace skyforger.models
 {
     public class SpellComponent
     {
+        public SpellComponent()
+        {
+            
+        }
         public SpellComponent(SpellComponentEnum spellcomponentenum)
         {
             SpellComponentEnum = spellcomponentenum;

@@ -9,9 +9,13 @@ namespace skyforger.models
     //[JsonConverter(typeof(StringEnumConverter))]
     public class ManaType
     {
-        public ManaType(ManaTypeEnum type)
+        public ManaType()
         {
-            ManaTypeEnum = type;
+            
+        }
+        public ManaType(ManaTypeEnum manatype)
+        {
+            ManaTypeEnum = manatype;
         }
         public int Id { get; set; }
         public ManaTypeEnum ManaTypeEnum { get; set; }

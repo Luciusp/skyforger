@@ -86,7 +86,8 @@ namespace skyforger.Controllers
                     if (spellendpoint == string.Empty)
                         continue;
 
-                    var spelluri = $"{_config["ObsidianPortal:BaseURI"]}{spellendpoint}";
+                    //var spelluri = $"{_config["ObsidianPortal:BaseURI"]}{spellendpoint}";
+                    var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/detect-fire";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/lesser-orb-of-cold";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/gate";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/clone";
@@ -109,7 +110,7 @@ namespace skyforger.Controllers
                     if (spell.Valid)
                     {
                         spelllist.Add(spell);
-                        //return spelllist;
+                        return spelllist;
                         await using (var fsw = System.IO.File.AppendText(testedspellsfile))
                         {
                             fsw.WriteLine($"{spell.SpellUri}");
@@ -306,8 +307,8 @@ namespace skyforger.Controllers
                     for (int i = 0; i < materialmatches.Count; i++)
                     {
                         var materialcomponent = materialmatches[i].Value.Replace("M (", "").Replace(")", "");
-                        spell.MaterialComponents.Add(char.ToUpper(materialcomponent.First()) +
-                                                     materialcomponent.Substring(1));
+                        spell.MaterialComponents.Add(new MaterialComponent(char.ToUpper(materialcomponent.First()) +
+                                                     materialcomponent.Substring(1)));
                     }
                 }
 
@@ -351,7 +352,7 @@ namespace skyforger.Controllers
                             _errors.Add(err);
                             _logger.LogError($"Spell with Focus is missing Focus description: {spell.SpellUri}");
                         }
-                        else spell.Focus.Add(char.ToUpper(focus.First()) + focus.Substring(1));
+                        else spell.Focus.Add(new Focus(char.ToUpper(focus.First()) + focus.Substring(1)));
                     }
                 }
             }
