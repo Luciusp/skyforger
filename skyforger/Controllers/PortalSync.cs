@@ -28,30 +28,29 @@ namespace skyforger.Controllers
         private readonly IHttpClientFactory _httpfactory;
         private readonly IConfiguration _config;
         private List<Error> _errors = new List<Error>();
+        private readonly SkyforgerContext _sfc;
 
-        public PortalSync(ILogger<PortalSync> logger, IHttpClientFactory httpfactory, IConfiguration config)
+        public PortalSync(ILogger<PortalSync> logger, IHttpClientFactory httpfactory, IConfiguration config, SkyforgerContext sfc)
         {
             _logger = logger;
             _httpfactory = httpfactory;
             _config = config;
+            _sfc = sfc;
         }
 
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> FullSync()
         {
-            var spells = await ScrapeSpells();
-            System.IO.File.WriteAllText(Environment.CurrentDirectory + "spells.json",JsonConvert.SerializeObject(spells));
-            System.IO.File.WriteAllText(Environment.CurrentDirectory + "spellerrors.json",JsonConvert.SerializeObject(_errors));
-            return Ok(spells);
+            await ScrapeSpells();
+            return Ok();
         }
 
-        private async Task<List<Spell>> ScrapeSpells()
+        private async Task ScrapeSpells()
         {
             var testedspellsfile = Path.Combine(Directory.GetCurrentDirectory(), "testedspells.txt");
             var testedspellssplit = System.IO.File.ReadAllText(testedspellsfile).Split("\n").ToList();
-                
-            var spelllist = new List<Spell>();
+            
             using var request = new HttpRequestMessage(HttpMethod.Get,
                 $"{_config["ObsidianPortal:BaseURI"]}/" +
                 $"{_config["ObsidianPortal:SpellsHub"]}");
@@ -86,8 +85,8 @@ namespace skyforger.Controllers
                     if (spellendpoint == string.Empty)
                         continue;
 
-                    //var spelluri = $"{_config["ObsidianPortal:BaseURI"]}{spellendpoint}";
-                    var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/detect-fire";
+                    var spelluri = $"{_config["ObsidianPortal:BaseURI"]}{spellendpoint}";
+                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/detect-fire";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/lesser-orb-of-cold";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/gate";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/clone";
@@ -109,8 +108,8 @@ namespace skyforger.Controllers
                     var spell = await TransposeSpell(spellcontent, spelluri);
                     if (spell.Valid)
                     {
-                        spelllist.Add(spell);
-                        return spelllist;
+                        _sfc.Add(spell);
+                        await _sfc.SaveChangesAsync();
                         await using (var fsw = System.IO.File.AppendText(testedspellsfile))
                         {
                             fsw.WriteLine($"{spell.SpellUri}");
@@ -118,8 +117,6 @@ namespace skyforger.Controllers
                     }
                 }
             }
-
-            return spelllist;
         }
 
         private async Task<Spell> TransposeSpell(string spellhtml, string spelluri)
