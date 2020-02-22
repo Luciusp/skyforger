@@ -1,9 +1,17 @@
 namespace skyforger.models.common
 {
-    public enum ManaClass
+    public class ManaClass
     {
-        Mono,
-        Multi_mana,
-        Diverse
+        public ManaClass()
+        {
+            
+        }
+        public ManaClass(ManaClassEnum manaclass)
+        {
+            ManaClassEnum = manaclass;
+        }
+
+        public int Id { get; set; }
+        public ManaClassEnum ManaClassEnum { get; set; }
     }
 }

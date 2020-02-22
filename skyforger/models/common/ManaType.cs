@@ -2,17 +2,22 @@ using System;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using skyforger.models.common;
 
 namespace skyforger.models
 {
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum ManaType
+    //[JsonConverter(typeof(StringEnumConverter))]
+    public class ManaType
     {
-        White,
-        Black,
-        Blue,
-        Red,
-        Green,
-        See_Text
+        public ManaType()
+        {
+            
+        }
+        public ManaType(ManaTypeEnum manatype)
+        {
+            ManaTypeEnum = manatype;
+        }
+        public int Id { get; set; }
+        public ManaTypeEnum ManaTypeEnum { get; set; }
     }
 }
