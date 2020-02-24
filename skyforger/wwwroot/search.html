@@ -17,7 +17,7 @@
     var descriptor = urlvars["descriptor"];
 
     const Http = new XMLHttpRequest();
-    const url = `http://localhost:5000/spells/find/advanced?manacolor=${manacolor}&manaclass=${manaclass}&level=${level}&school=${school}&subschool=${subschool}&descriptor=${descriptor}`;
+    const url = `http://${window.location.hostname}:5000/spells/find/advanced?manacolor=${manacolor}&manaclass=${manaclass}&level=${level}&school=${school}&subschool=${subschool}&descriptor=${descriptor}`;
     Http.open("GET", url);
     Http.send();
 

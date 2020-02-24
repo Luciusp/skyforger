@@ -35,6 +35,7 @@ namespace skyforger
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseUrls("http://*:5000");
                     webBuilder.UseConfiguration(config);
                     webBuilder.UseStartup<Startup>();
                 });
