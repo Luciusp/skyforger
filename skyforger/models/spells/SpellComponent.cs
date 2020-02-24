@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using skyforger.models.spells;
 
 namespace skyforger.models
@@ -14,6 +16,8 @@ namespace skyforger.models
         }
 
         public int Id { get; set; }
+        
+        [JsonConverter(typeof(StringEnumConverter))]
         public SpellComponentEnum SpellComponentEnum { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.WebEncoders.Testing;
+using Newtonsoft.Json;
 using skyforger.models;
 using skyforger.models.common;
 using skyforger.models.spells;
@@ -93,7 +94,7 @@ namespace skyforger.Controllers
                 .Include(t => t.MaterialComponents)
                 .ToList();
 
-            if (!string.IsNullOrEmpty(manacolor))
+            if (!string.IsNullOrEmpty(manacolor) && manacolor.ToLower() != "none")
             {
                 var validcolor = Enum.TryParse(manacolor, true, out ManaTypeEnum parsedmanacolor);
                 if (validcolor)
@@ -106,9 +107,9 @@ namespace skyforger.Controllers
                 }
             }
 
-            if (!string.IsNullOrEmpty(manaclass))
+            if (!string.IsNullOrEmpty(manaclass) && manaclass.ToLower() != "none")
             {
-                var validclass = Enum.TryParse(manacolor, true, out ManaClassEnum parsedmanaclass);
+                var validclass = Enum.TryParse(manaclass, true, out ManaClassEnum parsedmanaclass);
                 if (validclass)
                 {
                     spells = spells.Where(t => t.ManaClass.Any(v => v.ManaClassEnum == parsedmanaclass)).ToList();
@@ -119,7 +120,7 @@ namespace skyforger.Controllers
                 }
             }
             
-            if (!string.IsNullOrEmpty(level))
+            if (!string.IsNullOrEmpty(level) && level.ToLower() != "any")
             {
                 var validint = Int32.TryParse(level, out int intval);
                 if (validint)
@@ -132,7 +133,7 @@ namespace skyforger.Controllers
                 }
             }
             
-            if (!string.IsNullOrEmpty(school))
+            if (!string.IsNullOrEmpty(school) && school.ToLower() != "none")
             {
                 var validschool = Enum.TryParse(school, true, out SpellSchoolEnum parsedschool);
                 if (validschool)
@@ -145,7 +146,7 @@ namespace skyforger.Controllers
                 }
             }
             
-            if (!string.IsNullOrEmpty(subschool))
+            if (!string.IsNullOrEmpty(subschool) && subschool.ToLower() != "none")
             {
                 var validsubschool = Enum.TryParse(subschool, true, out SpellSubSchoolEnum parsedsubschool);
                 if (validsubschool)
@@ -158,7 +159,7 @@ namespace skyforger.Controllers
                 }
             }
             
-            if (!string.IsNullOrEmpty(descriptor))
+            if (!string.IsNullOrEmpty(descriptor) && descriptor.ToLower() != "none")
             {
                 var validdescriptor = Enum.TryParse(descriptor, true, out SpellDescriptorEnum parseddescriptor);
                 if (validdescriptor)
@@ -171,7 +172,7 @@ namespace skyforger.Controllers
                 }
             }
 
-            return Ok(spells);
+            return Ok(JsonConvert.SerializeObject(spells));
         }
     }
 }

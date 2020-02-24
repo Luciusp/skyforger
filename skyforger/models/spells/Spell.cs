@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using skyforger.models.common;
 
 namespace skyforger.models.spells
@@ -50,6 +50,7 @@ namespace skyforger.models.spells
         public string SpellResistance { get; set; }
         public string SpellUri { get; set; }
         public string Description { get; set; }
+        
         [JsonIgnore]
         public bool Valid { get; set; }
     }

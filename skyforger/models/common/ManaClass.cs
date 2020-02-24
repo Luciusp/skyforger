@@ -1,3 +1,6 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace skyforger.models.common
 {
     public class ManaClass
@@ -12,6 +15,8 @@ namespace skyforger.models.common
         }
 
         public int Id { get; set; }
+        
+        [JsonConverter(typeof(StringEnumConverter))]
         public ManaClassEnum ManaClassEnum { get; set; }
     }
 }

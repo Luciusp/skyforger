@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using skyforger.models.spells;
 
 namespace skyforger.models
@@ -13,6 +15,8 @@ namespace skyforger.models
             SpellSubSchoolEnum = spellsubschoolenum;
         }
         public int Id { get; set; }
+        
+        [JsonConverter(typeof(StringEnumConverter))]
         public SpellSubSchoolEnum SpellSubSchoolEnum { get; set; }
     }
 }

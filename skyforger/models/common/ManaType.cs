@@ -18,6 +18,8 @@ namespace skyforger.models
             ManaTypeEnum = manatype;
         }
         public int Id { get; set; }
+        
+        [JsonConverter(typeof(StringEnumConverter))]
         public ManaTypeEnum ManaTypeEnum { get; set; }
     }
 }
