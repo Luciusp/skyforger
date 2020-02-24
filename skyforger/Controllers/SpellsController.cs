@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp;
@@ -122,15 +123,29 @@ namespace skyforger.Controllers
             
             if (!string.IsNullOrEmpty(level) && level.ToLower() != "any")
             {
-                var validint = Int32.TryParse(level, out int intval);
-                if (validint)
+                var levelsplit = level.Split("-");
+                var validints = new List<int>();
+                foreach (var levelcheck in levelsplit)
                 {
-                    spells = spells.Where(t => t.SpellLevel == intval).ToList();
+                    if (Int32.TryParse(levelcheck, out int intval))
+                    {
+                        validints.Add(intval);
+                    }
+                    else
+                    {
+                        return StatusCode(400, "Invalid level. Make sure it's a number");
+                    }
                 }
+                validints.Sort();
+                var levelrange = new List<int>();
+                if (validints.Count < 2)
+                    levelrange.Add(validints.First());
                 else
                 {
-                    return StatusCode(400, "Invalid level. Make sure it's a number");
+                    levelrange = Enumerable.Range(validints[0], validints[1] - validints[0] +1).ToList();
                 }
+                
+                spells = spells.Where(t =>levelrange.Contains(t.SpellLevel)).ToList();
             }
             
             if (!string.IsNullOrEmpty(school) && school.ToLower() != "none")

@@ -20,7 +20,7 @@
     }
 </script>
 <div style="padding:1em">
-    <form action="search.html" onsubmit="myFunction()">
+    <form onsubmit="myFunction()">
         <div class="form-group">
             <label>Mana Color:</label>
             <select class="form-control" style="width:200px" id="manacolor" name="manacolor">
@@ -127,7 +127,8 @@
                 <option value="wild">Wild</option>
             </select>
         </div>
-        <input type="submit" class="btn btn-primary">
+        <input value="Search" type="submit" formaction="search.html" class="btn btn-primary">
+        <input value="Random Spell" type="submit" formaction="randomfiltered.html" class="btn btn-primary">
     </form>
 </div>
 </body>
