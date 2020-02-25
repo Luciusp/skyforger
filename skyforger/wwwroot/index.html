@@ -12,9 +12,13 @@
     <title>Skyforger</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder@2.5.2/dist/js/query-builder.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body style="background-color:#323232;">
+
+<div id="builder"></div>
+
 <div style="padding:1em">
     <form id="form">
         <div class="form-group">
@@ -134,6 +138,7 @@
 </div>
 <script>
     $(document).ready(function() {
+        
         $('#form').submit(function() {
             if($(document.activeElement).val() === "Random Spell")
             {
@@ -142,8 +147,6 @@
             return true; // return false to cancel form action
         });
     });
-    
-    
     
 </script>
 </body>

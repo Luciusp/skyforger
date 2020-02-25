@@ -199,7 +199,7 @@ namespace skyforger.Controllers
             if (!string.IsNullOrEmpty(random))
             {
                 var validbool = bool.TryParse(random, out bool result);
-                if (validbool)
+                if (validbool && result)
                 {
                     var randspell = new Random();
                     spells = spells.Skip(randspell.Next(0, spells.Count)).Take(1).ToList();
