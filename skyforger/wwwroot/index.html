@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Skyforger/</title>
+    <title>Skyforger</title>
 </head>
 <body>
 <!DOCTYPE html>
@@ -12,12 +12,13 @@
     <title>Skyforger</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
-<body>
+<body style="background-color:#323232;">
 <div style="padding:1em">
-    <form>
+    <form id="form">
         <div class="form-group">
-            <label>Mana Color:</label>
+            <label style="color: #ffffff">Mana Color:</label>
             <select class="form-control" style="width:200px" id="manacolor" name="manacolor">
                 <option value="none">Any</option>
                 <option value="red">Red</option>
@@ -28,7 +29,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Mana Class:</label>
+            <label style="color: #ffffff">Mana Class:</label>
             <select class="form-control" style="width:200px" id="manaclass" name="manaclass">
                 <option value="none">Any</option>
                 <option value="mono">Mono</option>
@@ -37,11 +38,11 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Spell Level:</label>
+            <label style="color: #ffffff">Spell Level:</label>
             <input style="width:200px" class="form-control" type="text" name="level" value="Any">
         </div>
         <div class="form-group">
-            <label>Spell School:</label>
+            <label style="color: #ffffff">Spell School:</label>
             <select class="form-control" style="width:200px" id="school" name="school">
                 <option value="none">Any</option>
                 <option value="abjuration">Abjuration</option>
@@ -59,7 +60,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Spell Subschool</label>
+            <label style="color: #ffffff">Spell Subschool</label>
             <select class="form-control" style="width:200px" id="subschool" name="subschool">
                 <option value="none">Any</option>
                 <option value="see_text">See Text</option>
@@ -80,7 +81,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Spell Descriptor</label>
+            <label style="color: #ffffff">Spell Descriptor</label>
             <select class="form-control" style="width:200px" id="descriptor" name="descriptor">
                 <option value="none">Any</option>
                 <option value="acid">Acid</option>
@@ -123,13 +124,27 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Contains the words:</label>
+            <label style="color: #ffffff">Contains the words:</label>
             <input style="width:200px" class="form-control" type="text" name="bytext" value="Any">
         </div>
-
+        <input id="randomfield" type="hidden" name="random" value="false">
         <input value="Search" type="submit" formaction="search.html" class="btn btn-primary">
-        <input value="Random Spell" type="submit" formaction="randomfiltered.html" class="btn btn-primary">
+        <input id="randombutton" value="Random Spell" type="submit" formaction="search.html" class="btn btn-primary">
     </form>
 </div>
+<script>
+    $(document).ready(function() {
+        $('#form').submit(function() {
+            if($(document.activeElement).val() === "Random Spell")
+            {
+                $('#randomfield').val("true");
+            }
+            return true; // return false to cancel form action
+        });
+    });
+    
+    
+    
+</script>
 </body>
 </html>

@@ -78,9 +78,10 @@ namespace skyforger.Controllers
             string school, 
             string subschool, 
             string descriptor,
-            string bytext)
+            string bytext,
+            string random)
         {
-            if (string.IsNullOrEmpty(manacolor + manaclass + level + school + subschool + descriptor + bytext))
+            if (string.IsNullOrEmpty(manacolor + manaclass + level + school + subschool + descriptor + bytext + random))
             {
                 return StatusCode(400, "Invalid query");
             }
@@ -191,7 +192,18 @@ namespace skyforger.Controllers
 
             if (!string.IsNullOrEmpty(bytext) && bytext.ToLower() != "any")
             {
-                spells = spells.Where(t => t.Description.Contains(bytext)).ToList();
+                bytext = $" {bytext} ";
+                spells = spells.Where(t => t.Description.ToLower().Contains(bytext)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(random))
+            {
+                var validbool = bool.TryParse(random, out bool result);
+                if (validbool)
+                {
+                    var randspell = new Random();
+                    spells = spells.Skip(randspell.Next(0, spells.Count)).Take(1).ToList();
+                }
             }
 
             return Ok(JsonConvert.SerializeObject(spells));

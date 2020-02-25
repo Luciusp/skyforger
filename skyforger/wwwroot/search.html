@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
-<body>
+<body style="background-color:black;">
 <script>
     var urlvars = getUrlVars();
     var manacolor = urlvars["manacolor"];
@@ -16,21 +16,21 @@
     var subschool = urlvars["subschool"];
     var descriptor = urlvars["descriptor"];
     var bytext = urlvars["bytext"];
+    var random = urlvars["random"];
 
     const Http = new XMLHttpRequest();
-    const url = `http://${window.location.hostname}:5000/spells/find/advanced?manacolor=${manacolor}&manaclass=${manaclass}&level=${level}&school=${school}&subschool=${subschool}&descriptor=${descriptor}&bytext=${bytext}`;
+    const url = `http://${window.location.hostname}:5000/spells/find/advanced?manacolor=${manacolor}&manaclass=${manaclass}&level=${level}&school=${school}&subschool=${subschool}&descriptor=${descriptor}&bytext=${bytext}&random=${random}`;
     Http.open("GET", url);
     Http.send();
 
     Http.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState === 4 && this.status === 200) {
             var json = JSON.parse(Http.responseText);
             console.log(json);
             json.forEach(obj => {
                 createListItem(obj);
             })
         }
-
     };
 
     function getUrlVars() {
@@ -44,30 +44,30 @@
     function createListItem(obj) {
         var table = document.getElementById("spelltable");
         table.insertRow().insertCell().innerHTML = `
-<table class="table">
+<div class="card" style="background-color: #323232">
+<table cellspacing="0" cellspacing="0" class="table" style="background-color: #323232; font">
     <tbody>
         <tr class="spellItem">
-            <td>
-                <div class="clear"></div>
+            <td bgcolor="#323232">
                 <div class="cardInfo">
                     <span style="font-size: 18px; text-decoration: underline"><b><a href="${obj["SpellUri"]}" target="_blank">${obj["Name"]}</a></b></span><br>
-                    <span class="typeLine" class="spellschool" style="text-transform:capitalize;">
+                    <span class="typeLine" class="spellschool" style="text-transform:capitalize;color: #ffffff; ">
                         School: ${obj["SchoolRaw"]}
                     </span><br>
-                    <span class="typeLine" class="spellmana" style="text-transform:capitalize;">
+                    <span class="typeLine" class="spellmana" style="text-transform:capitalize;color: #ffffff; ">
                         Level: ${obj["ManaDescription"]} ${obj["SpellLevel"]}
                     </span>
                     <br><br>
-                    <div class="rulesText">
+                    <div class="rulesText" style="color: #ffffff; ">
                         <p>${obj["Description"]}</p></div>
                 </div>
             </td>
         </tr>
     </tbody>
-</table>`;
+</table>
+</div>`;
     }
 </script>
-
 <table id="spelltable" class="table" cellpadding="0" cellspacing="0">
 </table>
 </body>
