@@ -66,6 +66,7 @@ namespace skyforger.Controllers
                 .Include(t => t.MaterialComponents)
                 .ToList();
 
+            
             return Ok();
         }
         
@@ -76,9 +77,10 @@ namespace skyforger.Controllers
             string level, 
             string school, 
             string subschool, 
-            string descriptor)
+            string descriptor,
+            string bytext)
         {
-            if (string.IsNullOrEmpty(manacolor + manaclass + level + school + subschool + descriptor))
+            if (string.IsNullOrEmpty(manacolor + manaclass + level + school + subschool + descriptor + bytext))
             {
                 return StatusCode(400, "Invalid query");
             }
@@ -185,6 +187,11 @@ namespace skyforger.Controllers
                 {
                     return StatusCode(400, "Invalid descriptor");
                 }
+            }
+
+            if (!string.IsNullOrEmpty(bytext) && bytext.ToLower() != "any")
+            {
+                spells = spells.Where(t => t.Description.Contains(bytext)).ToList();
             }
 
             return Ok(JsonConvert.SerializeObject(spells));

@@ -14,17 +14,12 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
-<script>
-    function myFunction() {
-        console.log("hello");
-    }
-</script>
 <div style="padding:1em">
-    <form onsubmit="myFunction()">
+    <form>
         <div class="form-group">
             <label>Mana Color:</label>
             <select class="form-control" style="width:200px" id="manacolor" name="manacolor">
-                <option value="none">None</option>
+                <option value="none">Any</option>
                 <option value="red">Red</option>
                 <option value="blue">Blue</option>
                 <option value="green">Green</option>
@@ -35,7 +30,7 @@
         <div class="form-group">
             <label>Mana Class:</label>
             <select class="form-control" style="width:200px" id="manaclass" name="manaclass">
-                <option value="none">None</option>
+                <option value="none">Any</option>
                 <option value="mono">Mono</option>
                 <option value="multi_mana">Multi-Mana</option>
                 <option value="diverse">Diverse</option>
@@ -48,7 +43,7 @@
         <div class="form-group">
             <label>Spell School:</label>
             <select class="form-control" style="width:200px" id="school" name="school">
-                <option value="none">None</option>
+                <option value="none">Any</option>
                 <option value="abjuration">Abjuration</option>
                 <option value="chronomancy">Chronomancy</option>
                 <option value="conjuration">Conjuration</option>
@@ -66,7 +61,7 @@
         <div class="form-group">
             <label>Spell Subschool</label>
             <select class="form-control" style="width:200px" id="subschool" name="subschool">
-                <option value="none">None</option>
+                <option value="none">Any</option>
                 <option value="see_text">See Text</option>
                 <option value="calling">Calling</option>
                 <option value="creation">Creation</option>
@@ -87,7 +82,7 @@
         <div class="form-group">
             <label>Spell Descriptor</label>
             <select class="form-control" style="width:200px" id="descriptor" name="descriptor">
-                <option value="none">None</option>
+                <option value="none">Any</option>
                 <option value="acid">Acid</option>
                 <option value="air">Air</option>
                 <option value="chaotic">Chaotic</option>
@@ -127,6 +122,11 @@
                 <option value="wild">Wild</option>
             </select>
         </div>
+        <div class="form-group">
+            <label>Contains the words:</label>
+            <input style="width:200px" class="form-control" type="text" name="bytext" value="Any">
+        </div>
+
         <input value="Search" type="submit" formaction="search.html" class="btn btn-primary">
         <input value="Random Spell" type="submit" formaction="randomfiltered.html" class="btn btn-primary">
     </form>

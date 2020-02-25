@@ -15,9 +15,10 @@
     var school = urlvars["school"];
     var subschool = urlvars["subschool"];
     var descriptor = urlvars["descriptor"];
+    var bytext = urlvars["bytext"];
 
     const Http = new XMLHttpRequest();
-    const url = `http://${window.location.hostname}:5000/spells/find/advanced?manacolor=${manacolor}&manaclass=${manaclass}&level=${level}&school=${school}&subschool=${subschool}&descriptor=${descriptor}`;
+    const url = `http://${window.location.hostname}:5000/spells/find/advanced?manacolor=${manacolor}&manaclass=${manaclass}&level=${level}&school=${school}&subschool=${subschool}&descriptor=${descriptor}&bytext=${bytext}`;
     Http.open("GET", url);
     Http.send();
 
@@ -41,9 +42,6 @@
     }
 
     function createListItem(obj) {
-        var mana = [];
-        
-
         var table = document.getElementById("spelltable");
         table.insertRow().insertCell().innerHTML = `
 <table class="table">
@@ -52,7 +50,7 @@
             <td>
                 <div class="clear"></div>
                 <div class="cardInfo">
-                    <span style="font-size: 18px; text-decoration: underline"><b><a href="${obj["SpellUri"]}">${obj["Name"]}</a></b></span><br>
+                    <span style="font-size: 18px; text-decoration: underline"><b><a href="${obj["SpellUri"]}" target="_blank">${obj["Name"]}</a></b></span><br>
                     <span class="typeLine" class="spellschool" style="text-transform:capitalize;">
                         School: ${obj["SchoolRaw"]}
                     </span><br>

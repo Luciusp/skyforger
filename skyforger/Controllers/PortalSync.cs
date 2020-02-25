@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -30,7 +32,8 @@ namespace skyforger.Controllers
         private List<Error> _errors = new List<Error>();
         private readonly SkyforgerContext _sfc;
 
-        public PortalSync(ILogger<PortalSync> logger, IHttpClientFactory httpfactory, IConfiguration config, SkyforgerContext sfc)
+        public PortalSync(ILogger<PortalSync> logger, IHttpClientFactory httpfactory, IConfiguration config,
+            SkyforgerContext sfc)
         {
             _logger = logger;
             _httpfactory = httpfactory;
@@ -48,9 +51,7 @@ namespace skyforger.Controllers
 
         private async Task ScrapeSpells()
         {
-            var testedspellsfile = Path.Combine(Directory.GetCurrentDirectory(), "testedspells.txt");
-            var testedspellssplit = System.IO.File.ReadAllText(testedspellsfile).Split("\n").ToList();
-            
+            var errcount = 0;
             using var request = new HttpRequestMessage(HttpMethod.Get,
                 $"{_config["ObsidianPortal:BaseURI"]}/" +
                 $"{_config["ObsidianPortal:SpellsHub"]}");
@@ -59,22 +60,24 @@ namespace skyforger.Controllers
             var response = await client.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();
 
-            //match all uris with *-pool-spells (should be 5)
-            var regex = new Regex("wikis\\/.*\\-pool\\-spells");
+            //match all uris with *-spells (should be 7)
+            var regex = new Regex(@"<li>.*wikis\/.*?-spells");
+            
             var match = regex.Matches(content);
 
             for (int i = 0; i < match.Count; i++)
             {
+                var matchendpoint = match[i].Value.Replace("<li><a href=\"/", "");
                 using var colorspellhubreq = new HttpRequestMessage(HttpMethod.Get,
                     $"{_config["ObsidianPortal:BaseURI"]}/" +
-                    $"{match[i].Value}");
+                    $"{matchendpoint}");
                 using var spellhubclient = _httpfactory.CreateClient();
 
                 var spellhubresponse = await spellhubclient.SendAsync(colorspellhubreq);
                 var spellhubcontent = await spellhubresponse.Content.ReadAsStringAsync();
 
                 //match all table entries. Start at 1 to skip column titles
-                var spellhubregex = new Regex("<tr>\n\t\t\t<td>.*\n.*\n.*\n.*\n*.\t<\\/tr>");
+                var spellhubregex = new Regex(@"<tr>(.|\n)*?<\/tr>");
                 var spellhubtablematch = spellhubregex.Matches(spellhubcontent);
                 for (int j = 1; j < spellhubtablematch.Count; j++)
                 {
@@ -86,6 +89,8 @@ namespace skyforger.Controllers
                         continue;
 
                     var spelluri = $"{_config["ObsidianPortal:BaseURI"]}{spellendpoint}";
+                    
+                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/summon-monster-2";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/detect-fire";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/lesser-orb-of-cold";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/gate";
@@ -96,10 +101,13 @@ namespace skyforger.Controllers
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/lightning-ring";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/enhance-familiar";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/lookingglass";
-                    if (testedspellssplit.Contains(spelluri))
-                        continue;
                     
-
+                    var existingentity = _sfc.Spells.FirstOrDefault(t => t.SpellUri == spelluri);
+                    if (existingentity != null)
+                    {
+                        continue;
+                    }
+                    
                     using var spellreq = new HttpRequestMessage(HttpMethod.Get, spelluri);
                     using var spellclient = _httpfactory.CreateClient();
 
@@ -108,20 +116,22 @@ namespace skyforger.Controllers
                     var spell = await TransposeSpell(spellcontent, spelluri);
                     if (spell.Valid)
                     {
+                        _logger.LogInformation("Adding new spell");
                         _sfc.Add(spell);
+
                         await _sfc.SaveChangesAsync();
-                        await using (var fsw = System.IO.File.AppendText(testedspellsfile))
-                        {
-                            fsw.WriteLine($"{spell.SpellUri}");
-                        };
+                    }
+                    else
+                    {
+                        errcount++;
                     }
                 }
             }
+            _logger.LogError($"Operation completed. Total failures: {errcount}");
         }
 
         private async Task<Spell> TransposeSpell(string spellhtml, string spelluri)
         {
-
             /*
              * We're pulling out something that looks like this:
              *  <div itemprop='text'>
@@ -153,11 +163,6 @@ namespace skyforger.Controllers
             var spellnameregex = new Regex(@"<title>.* \| Skies of Glass \| Obsidian Portal<\/title>");
             spell.Name = spellnameregex.Match(spellhtml).Value.Split(" |")[0].Replace("<title>", "");
 
-            //using var md5 = MD5.Create();
-            //spell.IdHash = Math.Abs(BitConverter.ToInt32(md5.ComputeHash(Encoding.UTF8.GetBytes(spell.Name)), 0));
-
-            //TODO: look for spellid hash for dupes. Log collisions
-
             /*get entry starting with spellname. Split on <li>, skip the first entry because
              *it's blank and returns -1 indexof
              */
@@ -169,11 +174,10 @@ namespace skyforger.Controllers
                 spelldetails = spellinfo.Split("<ul>")[1].Split("<li>")
                     .Skip(1)
                     .Select(t => t.Substring(0, t.IndexOf("</li>", StringComparison.Ordinal))).ToList();
-
             }
             catch (Exception e)
             {
-                var errlist = new List<string>() { "Invalid html in spell range", e.Message};
+                var errlist = new List<string>() {"Invalid html in spell range", e.Message};
                 var err = new Error("spell", spelluri, errlist);
                 _errors.Add(err);
                 _logger.LogWarning("Invalid html in spell page");
@@ -181,19 +185,18 @@ namespace skyforger.Controllers
                 return spell;
             }
 
-            //search all spelldetails for school and match against spellschool enum to see if there are any matches
-//            var schoolinfo = spelldetails.FirstOrDefault(t => t.Split(" ").Any(x => Enum.GetNames(typeof(SpellSchool))
-//                .ToList().Contains(x)));
-
             var schoolpattern = await RegexFromEnum<SpellSchoolEnum>();
-            var schoolinfo = spelldetails.FirstOrDefault(t => !string.IsNullOrEmpty(Regex.Match(t, schoolpattern).Value));
+            var schoolinfo =
+                spelldetails.FirstOrDefault(t => !string.IsNullOrEmpty(Regex.Match(t, schoolpattern).Value));
 
             if (string.IsNullOrEmpty(schoolinfo))
             {
-                var errlist = new List<string>() { "School info is missing"};
+                var errlist = new List<string>() {"School info is missing"};
                 var err = new Error("spell", spelluri, errlist);
                 _errors.Add(err);
                 _logger.LogError($"Unable to find school for spell {spelluri}");
+                spell.Valid = false;
+                return spell;
             }
             //pattern match: school is not surrounded by special characters, descriptor has
             //brackets and can be list, and subschool is parenthesis CANNOT be a list
@@ -218,15 +221,18 @@ namespace skyforger.Controllers
                         {
                             try
                             {
-                                spell.SubSchool.Add(new SpellSubSchool((SpellSubSchoolEnum) Enum.Parse(typeof(SpellSubSchoolEnum), subsschoolentry.Trim(),
+                                spell.SubSchool.Add(new SpellSubSchool((SpellSubSchoolEnum) Enum.Parse(
+                                    typeof(SpellSubSchoolEnum), subsschoolentry.Trim(),
                                     true)));
                             }
                             catch (Exception e)
                             {
-                                var errlist = new List<string>() { "Unable to parse subschool"};
+                                var errlist = new List<string>() {"Unable to parse subschool"};
                                 var err = new Error("spell", spelluri, errlist);
                                 _errors.Add(err);
-                                _logger.LogError(e,"Unable to parse subschool");
+                                _logger.LogError(e, "Unable to parse subschool");
+                                spell.Valid = false;
+                                return spell;
                             }
                         }
                     }
@@ -243,26 +249,27 @@ namespace skyforger.Controllers
                         {
                             try
                             {
-                                spell.Descriptor.Add(new SpellDescriptor((SpellDescriptorEnum) Enum.Parse<SpellDescriptorEnum>(
-                                    descriptorentry.Trim().Replace(" ", "_").Replace("-", "_"), true)));
+                                spell.Descriptor.Add(new SpellDescriptor(
+                                    (SpellDescriptorEnum) Enum.Parse<SpellDescriptorEnum>(
+                                        descriptorentry.Trim().Replace(" ", "_").Replace("-", "_"), true)));
                             }
                             catch (Exception e)
                             {
-                                var errlist = new List<string>() { "Unable to parse spell descriptor"};
+                                var errlist = new List<string>() {"Unable to parse spell descriptor"};
                                 var err = new Error("spell", spelluri, errlist);
                                 _errors.Add(err);
-                                _logger.LogError(e,"Unable to parse spell descriptor");
+                                _logger.LogError(e, "Unable to parse spell descriptor");
                             }
                         }
                     }
-                    
                 }
 
                 //insert schools
                 var schools = schoolinfo.Trim().Split("/");
                 foreach (var school in schools)
                 {
-                    spell.School.Add(new SpellSchool((SpellSchoolEnum) Enum.Parse(typeof(SpellSchoolEnum), school, true)));
+                    spell.School.Add(
+                        new SpellSchool((SpellSchoolEnum) Enum.Parse(typeof(SpellSchoolEnum), school, true)));
                 }
             }
 
@@ -270,12 +277,14 @@ namespace skyforger.Controllers
             var componentinfo = spelldetails.FirstOrDefault(t => t.Contains("Components"));
             if (componentinfo == null)
             {
-                var errlist = new List<string>() { "Unable to find spell components"};
+                var errlist = new List<string>() {"Unable to find spell components"};
                 var err = new Error("spell", spelluri, errlist);
                 _errors.Add(err);
                 _logger.LogError($"Unable to find spell components for {spelluri}");
+                spell.Valid = false;
+                return spell;
             }
-            
+
             else
             {
                 var components = componentinfo.Replace("Components", "").Replace(":", "");
@@ -305,7 +314,7 @@ namespace skyforger.Controllers
                     {
                         var materialcomponent = materialmatches[i].Value.Replace("M (", "").Replace(")", "");
                         spell.MaterialComponents.Add(new MaterialComponent(char.ToUpper(materialcomponent.First()) +
-                                                     materialcomponent.Substring(1)));
+                                                                           materialcomponent.Substring(1)));
                     }
                 }
 
@@ -337,14 +346,13 @@ namespace skyforger.Controllers
                                 spell.Components.Add(new SpellComponent(SpellComponentEnum.Focus));
                                 spell.Components.Add(new SpellComponent(SpellComponentEnum.Divine_Focus));
                                 break;
-
                         }
 
                         var focus = new Regex(@"\((.*?)\)").Match(focusmatches[i].Value).Value.Replace("(", "")
                             .Replace(")", "");
                         if (string.IsNullOrEmpty(focus))
                         {
-                            var errlist = new List<string>() { "Focus is missing focus description"};
+                            var errlist = new List<string>() {"Focus is missing focus description"};
                             var err = new Error("spell", spelluri, errlist);
                             _errors.Add(err);
                             _logger.LogError($"Spell with Focus is missing Focus description: {spell.SpellUri}");
@@ -360,10 +368,12 @@ namespace skyforger.Controllers
             var manainfo = spelldetails.FirstOrDefault(t => t.Contains("Level"));
             if (manainfo == null)
             {
-                var errlist = new List<string>() { "Mana information malformed"};
+                var errlist = new List<string>() {"Mana information malformed"};
                 var err = new Error("spell", spelluri, errlist);
                 _errors.Add(err);
                 _logger.LogError($"Mana information malformed for spell {spelluri}");
+                spell.Valid = false;
+                return spell;
             }
             else
             {
@@ -408,7 +418,8 @@ namespace skyforger.Controllers
                         spell.ManaClass.Add(new ManaClass(ManaClassEnum.Mono));
                     }
                 }
-                if(!spell.ManaClass.Any())
+
+                if (!spell.ManaClass.Any())
                     spell.ManaClass.Add(new ManaClass(ManaClassEnum.Mono));
 
                 //set spell level to something absurd so I can catch ones that don't have a level assigned
@@ -416,7 +427,7 @@ namespace skyforger.Controllers
                 var levelexists = manainfo.Split(" ").Any(t => Int32.TryParse(t, out level));
                 if (!levelexists)
                 {
-                    var errlist = new List<string>() { "Missing level info"};
+                    var errlist = new List<string>() {"Missing level info"};
                     var err = new Error("spell", spelluri, errlist);
                     _errors.Add(err);
                     _logger.LogError($"Missing level info for spell {spelluri}");
@@ -440,23 +451,12 @@ namespace skyforger.Controllers
                 var pattern = await RegexFromEnum<ActionType>();
                 var actionreg = new Regex(pattern);
                 var actionmatches = actionreg.Matches(actioninfo);
-                
+
                 int anytimefactor = 0;
                 var timefactorexists = actioninfo.Split(" ").Any(t => Int32.TryParse(t, out anytimefactor));
                 if (!timefactorexists && actioninfo.ToLower() != "see text")
                     _logger.LogError($"Missing timefactor action info for spell {spelluri}");
-                
-//                foreach (var aelement in actioninfo.Split(" "))
-//                {
-//                    int numresult = 0;
-//                    var isnum = Int32.TryParse(aelement, out numresult);
-//                    if (isnum)
-//                    {
-//                        actioninfo = Regex.Replace(actioninfo,$"{numresult.ToString()}[\\s]{{0,1}}", "");
-//                    }
-//                        
-//                }
-                
+
                 for (int i = 0; i < actionmatches.Count; i++)
                 {
                     try
@@ -465,12 +465,15 @@ namespace skyforger.Controllers
                             continue;
                         var extractedaction = actionmatches[i].Value;
                         var timefactormatch = Regex.Match(extractedaction, @"[\d]{0,1}[\s]{0,1}").Value.Trim();
-                        var timefactor = (string.IsNullOrEmpty(timefactormatch) || timefactormatch == "") ? 0 : Int32.Parse(timefactormatch);
+                        var timefactor = (string.IsNullOrEmpty(timefactormatch) || timefactormatch == "")
+                            ? 0
+                            : Int32.Parse(timefactormatch);
                         if (timefactor != 0)
                         {
-                            extractedaction = Regex.Replace(extractedaction,$"{timefactor.ToString()}[\\s]{{0,1}}", "");
+                            extractedaction = Regex.Replace(extractedaction, $"{timefactor.ToString()}[\\s]{{0,1}}",
+                                "");
                         }
-                        
+
                         var actionexists = Enum.TryParse(extractedaction.ToLower().Replace(" action", "")
                                 .TrimStart().Replace(" ", "_").Trim(), true,
                             out ActionType actionType);
@@ -481,26 +484,27 @@ namespace skyforger.Controllers
                                 Type = actionType,
                                 TimeFactor = timefactor
                             };
-                        
+
                             spell.Action.Add(action);
                         }
                     }
                     catch (Exception e)
                     {
-                        var errlist = new List<string>() { "Potentially malformed action. Unable to parse", e.Message};
+                        var errlist = new List<string>() {"Potentially malformed action. Unable to parse", e.Message};
                         var err = new Error("spell", spelluri, errlist);
                         _errors.Add(err);
                         _logger.LogError(e, "Unable to parse action");
+                        spell.Valid = false;
+                        return spell;
                     }
-                    
-                } 
+                }
             }
 
             //Duration
             var durationinfo = spelldetails.FirstOrDefault(t => t.ToLower().StartsWith("duration"));
             if (!string.IsNullOrEmpty(durationinfo))
             {
-                durationinfo = Regex.Replace(durationinfo, @"[Dd]uration[:]{0,2}[\s]{0,2}","");
+                durationinfo = Regex.Replace(durationinfo, @"[Dd]uration[:]{0,2}[\s]{0,2}", "");
                 spell.Duration = durationinfo;
             }
 
@@ -508,7 +512,7 @@ namespace skyforger.Controllers
             var rangeinfo = spelldetails.FirstOrDefault(t => t.ToLower().StartsWith("range"));
             if (!string.IsNullOrEmpty(rangeinfo))
             {
-                rangeinfo = Regex.Replace(rangeinfo, @"[Rr]ange[:]{0,2}[\s]{0,2}","");
+                rangeinfo = Regex.Replace(rangeinfo, @"[Rr]ange[:]{0,2}[\s]{0,2}", "");
                 spell.Range = char.ToUpper(rangeinfo.First()) + rangeinfo.Substring(1);
             }
 
@@ -536,7 +540,7 @@ namespace skyforger.Controllers
                 targetinfo = Regex.Replace(targetinfo, @"[Tt]arget[\s]{0,1}[:]{0,1}[\s]{0,1}", "");
                 spell.Target = char.ToUpper(targetinfo.First()) + targetinfo.Substring(1);
             }
-            
+
             //Effect
             var effectinfo = spelldetails.FirstOrDefault(t => t.ToLower().StartsWith("effect"));
             if (!string.IsNullOrEmpty(effectinfo))
@@ -568,6 +572,7 @@ namespace skyforger.Controllers
                         thisname = $"full [Rr]ound";
                         break;
                 }
+
                 var firstchar = thisname.First();
                 var firstcharcap = char.ToUpper(thisname.First());
                 var prepend = $"[{firstcharcap}{firstchar}]";
@@ -575,12 +580,12 @@ namespace skyforger.Controllers
                 {
                     result.Append(@"[\d]{0,1}[\s]{0,1}");
                 }
-                
+
                 result.Append($"{prepend}{thisname.Substring(1)}");
                 if (name != Enum.GetNames(typeof(T)).Last())
                     result.Append("|");
             }
-            
+
             return result.ToString();
         }
     }
