@@ -90,7 +90,7 @@ namespace skyforger.Controllers
 
                     var spelluri = $"{_config["ObsidianPortal:BaseURI"]}{spellendpoint}";
                     
-                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/summon-monster-2";
+                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/sign";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/detect-fire";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/lesser-orb-of-cold";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/gate";
@@ -440,8 +440,8 @@ namespace skyforger.Controllers
             }
 
             //Description
-            spell.Description = Regex.Replace(spellinfo.Split("<p>")[1],
-                "<[^>]*>", string.Empty);
+            var description = Regex.Match(spellinfo, @"<p>(.|\n)*?<\/div>").Value;
+            spell.Description = Regex.Replace(description, @"<[^>]*>", "").Replace("\t", "");
 
             //Action
             var actioninfo = spelldetails.FirstOrDefault(t => t.ToLower().StartsWith("casting time"));
