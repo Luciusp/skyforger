@@ -79,6 +79,7 @@ namespace skyforger.Controllers
             string subschool, 
             string descriptor,
             string bytext,
+            string fuzzymatch,
             string random)
         {
             if (string.IsNullOrEmpty(manacolor + manaclass + level + school + subschool + descriptor + bytext + random))
@@ -192,7 +193,13 @@ namespace skyforger.Controllers
 
             if (!string.IsNullOrEmpty(bytext) && bytext.ToLower() != "any")
             {
-                bytext = $" {bytext} ";
+                var validfuzzy = bool.TryParse(fuzzymatch, out bool fuzzy);
+                if (validfuzzy && fuzzy)
+                {
+                    bytext = bytext.ToLower();
+                }
+                else bytext = $" {bytext.ToLower()} ";
+                
                 spells = spells.Where(t => t.Description.ToLower().Contains(bytext)).ToList();
             }
 
