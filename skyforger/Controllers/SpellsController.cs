@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AngleSharp;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.WebEncoders.Testing;
 using Newtonsoft.Json;
@@ -212,8 +213,17 @@ namespace skyforger.Controllers
                     spells = spells.Skip(randspell.Next(0, spells.Count)).Take(1).ToList();
                 }
             }
+            
+            var colorcounts = new Dictionary<string, int>();
+            foreach (var color in Enum.GetValues(typeof(ManaTypeEnum)))
+            {
+                if (color.ToString() == "See_Text")
+                    continue;
+                colorcounts.Add(color.ToString(), spells.Count(t => t.Mana.Any(v => v.ManaTypeEnum == Enum.Parse<ManaTypeEnum>(color.ToString()))));
+            }
 
-            return Ok(JsonConvert.SerializeObject(spells));
+            var objres = new SpellQueryResult(colorcounts, spells);
+            return Ok(JsonConvert.SerializeObject(objres));
         }
     }
 }

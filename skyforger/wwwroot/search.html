@@ -7,6 +7,20 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body style="background-color:black; color: #ffffff; font-size: 20px;">
+<span class="grid-container" id="searchresults"></span>
+<style>
+    .grid-container {
+        display: inline-grid;
+        grid-template-columns: repeat(6, 1fr);
+        padding: 0px;
+    }
+
+    .grid-item {
+        border: 1px solid rgba(0, 0, 0, 0.8);
+        padding-right: 1em;
+        text-align: center;
+    }
+</style>
 <script>
     var urlvars = getUrlVars();
     var manacolor = urlvars["manacolor"];
@@ -28,11 +42,19 @@
         if (this.readyState === 4 && this.status === 200) {
             var json = JSON.parse(Http.responseText);
             console.log(json);
-            json.forEach(obj => {
+
+            document.getElementById("searchresults").innerHTML = `
+            <div class="grid-item">Results: ${json["Spells"].length}</div>`;
+
+            for (const [key, value] of Object.entries(json["ColorCounts"])) {
+                document.getElementById("searchresults").innerHTML += `<div class="grid-item">${key}: ${value}</div>`;
+            }
+                
+
+            json["Spells"].forEach(obj => {
                 createListItem(obj);
             });
-            if(json.length === 0)
-            {
+            if (json.length === 0) {
                 document.getElementById("body").innerHTML = "<div class=\"d-flex justify-content-center\">No results</div>";
             }
         }
