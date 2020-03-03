@@ -80,10 +80,11 @@ namespace skyforger.Controllers
             string subschool, 
             string descriptor,
             string bytext,
+            string bytitle,
             string fuzzymatch,
             string random)
         {
-            if (string.IsNullOrEmpty(manacolor + manaclass + level + school + subschool + descriptor + bytext + random))
+            if (string.IsNullOrEmpty(manacolor + manaclass + level + school + subschool + descriptor + bytext + bytitle + random))
             {
                 return StatusCode(400, "Invalid query");
             }
@@ -202,6 +203,13 @@ namespace skyforger.Controllers
                 else bytext = $" {bytext.ToLower()} ";
                 
                 spells = spells.Where(t => t.Description.ToLower().Contains(bytext)).ToList();
+            }
+            
+            if (!string.IsNullOrEmpty(bytitle) && bytitle.ToLower() != "any")
+            {
+                bytitle = bytitle.ToLower();
+                
+                spells = spells.Where(t => t.Name.ToLower().Contains(bytitle)).ToList();
             }
 
             if (!string.IsNullOrEmpty(random))

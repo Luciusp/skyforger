@@ -30,11 +30,12 @@
     var subschool = urlvars["subschool"];
     var descriptor = urlvars["descriptor"];
     var bytext = urlvars["bytext"];
+    var bytitle = urlvars["bytitle"];
     var fuzzymatch = urlvars["fuzzymatch"];
     var random = urlvars["random"];
 
     const Http = new XMLHttpRequest();
-    const url = `http://${window.location.hostname}:5000/spells/find/advanced?manacolor=${manacolor}&manaclass=${manaclass}&level=${level}&school=${school}&subschool=${subschool}&descriptor=${descriptor}&bytext=${bytext}&fuzzymatch=${fuzzymatch}&random=${random}`;
+    const url = `http://${window.location.hostname}:5000/spells/find/advanced?manacolor=${manacolor}&manaclass=${manaclass}&level=${level}&school=${school}&subschool=${subschool}&descriptor=${descriptor}&bytext=${bytext}&bytitle=${bytitle}&fuzzymatch=${fuzzymatch}&random=${random}`;
     Http.open("GET", url);
     Http.send();
 
