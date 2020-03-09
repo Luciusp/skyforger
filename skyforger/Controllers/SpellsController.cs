@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using AngleSharp;
 using Microsoft.AspNetCore.Mvc;
@@ -47,13 +48,13 @@ namespace skyforger.Controllers
         }
 
         [Route("names")]
-        public async Task<ActionResult> GetSpellNames()
+        public async Task<IActionResult> GetSpellNames()
         {
             return Ok(_sfc.Spells.Select(t => new {t.Name, t.SpellUri}).ToList());
         }
 
         [Route("find")]
-        public async Task<ActionResult> FindSpellByName()
+        public async Task<IActionResult> FindSpellByName()
         {
             var spells = _sfc.Spells
                 .Include(t => t.Action)
@@ -70,9 +71,28 @@ namespace skyforger.Controllers
             
             return Ok();
         }
+
+        [Route("test")]
+        public async Task<IActionResult> Test(string query)
+        {
+            var spells = _sfc.Spells
+                .Include(t => t.Action)
+                .Include(t => t.Components)
+                .Include(t => t.Descriptor)
+                .Include(t => t.Focus)
+                .Include(t => t.Mana)
+                .Include(t => t.School)
+                .Include(t => t.ManaClass)
+                .Include(t => t.SubSchool)
+                .Include(t => t.MaterialComponents);
+
+            var help = spells.Where(t => t.Mana.Any(v => v.ManaTypeEnum == ManaTypeEnum.Red) && t.Mana.Any(t => t.ManaTypeEnum == ManaTypeEnum.Blue) && !t.Mana.Any(v => v.ManaTypeEnum == ManaTypeEnum.Black));
+            var test = spells.Where($"Mana.Any(ManaTypeEnum == ManaTypeEnum.{query} && ManaTypeEnum != ManaTypeEnum.Black)", 1).ToList();
+            return Ok(JsonConvert.SerializeObject(help));
+        }
         
         [Route("find/advanced")]
-        public async Task<ActionResult> FindSpells(
+        public async Task<IActionResult> FindSpells(
             string manacolor, 
             string manaclass, 
             string level, 
