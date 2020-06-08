@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using skyforger.models.common;
 using skyforger.models.spells;
@@ -15,5 +16,13 @@ namespace skyforger.models
         
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=source.db");
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                foreignKey.DeleteBehavior = DeleteBehavior.Cascade;
+            }
+        }
     }
 }

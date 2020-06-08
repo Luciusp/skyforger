@@ -9,7 +9,7 @@ using skyforger.models;
 namespace skyforger.Migrations
 {
     [DbContext(typeof(SkyforgerContext))]
-    [Migration("20200221235825_InitialCreate")]
+    [Migration("20200608053617_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -246,63 +246,72 @@ namespace skyforger.Migrations
                 {
                     b.HasOne("skyforger.models.spells.Spell", null)
                         .WithMany("Mana")
-                        .HasForeignKey("SpellId");
+                        .HasForeignKey("SpellId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("skyforger.models.SpellComponent", b =>
                 {
                     b.HasOne("skyforger.models.spells.Spell", null)
                         .WithMany("Components")
-                        .HasForeignKey("SpellId");
+                        .HasForeignKey("SpellId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("skyforger.models.SpellDescriptor", b =>
                 {
                     b.HasOne("skyforger.models.spells.Spell", null)
                         .WithMany("Descriptor")
-                        .HasForeignKey("SpellId");
+                        .HasForeignKey("SpellId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("skyforger.models.SpellSchool", b =>
                 {
                     b.HasOne("skyforger.models.spells.Spell", null)
                         .WithMany("School")
-                        .HasForeignKey("SpellId");
+                        .HasForeignKey("SpellId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("skyforger.models.SpellSubSchool", b =>
                 {
                     b.HasOne("skyforger.models.spells.Spell", null)
                         .WithMany("SubSchool")
-                        .HasForeignKey("SpellId");
+                        .HasForeignKey("SpellId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("skyforger.models.common.ManaClass", b =>
                 {
                     b.HasOne("skyforger.models.spells.Spell", null)
                         .WithMany("ManaClass")
-                        .HasForeignKey("SpellId");
+                        .HasForeignKey("SpellId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("skyforger.models.spells.Focus", b =>
                 {
                     b.HasOne("skyforger.models.spells.Spell", null)
                         .WithMany("Focus")
-                        .HasForeignKey("SpellId");
+                        .HasForeignKey("SpellId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("skyforger.models.spells.MaterialComponent", b =>
                 {
                     b.HasOne("skyforger.models.spells.Spell", null)
                         .WithMany("MaterialComponents")
-                        .HasForeignKey("SpellId");
+                        .HasForeignKey("SpellId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("skyforger.models.spells.SpellAction", b =>
                 {
                     b.HasOne("skyforger.models.spells.Spell", null)
                         .WithMany("Action")
-                        .HasForeignKey("SpellId");
+                        .HasForeignKey("SpellId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

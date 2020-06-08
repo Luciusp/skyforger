@@ -48,7 +48,7 @@ namespace skyforger.Migrations
                         column: x => x.SpellId,
                         principalTable: "Spells",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -68,7 +68,7 @@ namespace skyforger.Migrations
                         column: x => x.SpellId,
                         principalTable: "Spells",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -88,7 +88,7 @@ namespace skyforger.Migrations
                         column: x => x.SpellId,
                         principalTable: "Spells",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -108,7 +108,7 @@ namespace skyforger.Migrations
                         column: x => x.SpellId,
                         principalTable: "Spells",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -129,7 +129,7 @@ namespace skyforger.Migrations
                         column: x => x.SpellId,
                         principalTable: "Spells",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -149,7 +149,7 @@ namespace skyforger.Migrations
                         column: x => x.SpellId,
                         principalTable: "Spells",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -169,7 +169,7 @@ namespace skyforger.Migrations
                         column: x => x.SpellId,
                         principalTable: "Spells",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -189,7 +189,7 @@ namespace skyforger.Migrations
                         column: x => x.SpellId,
                         principalTable: "Spells",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -209,7 +209,7 @@ namespace skyforger.Migrations
                         column: x => x.SpellId,
                         principalTable: "Spells",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
