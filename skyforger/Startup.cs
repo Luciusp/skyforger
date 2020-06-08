@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using skyforger.models;
+using skyforger.Utilities;
 
 namespace skyforger
 {
@@ -29,8 +30,8 @@ namespace skyforger
         {
             services.AddControllers();
             services.AddHttpClient();
-
             services.AddEntityFrameworkSqlite().AddDbContext<SkyforgerContext>();
+            services.AddHostedService<PortalWatcher>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
