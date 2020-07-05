@@ -102,7 +102,8 @@ namespace skyforger.Controllers
             string bytext,
             string bytitle,
             string fuzzymatch,
-            string random)
+            string random
+            )
         {
             if (string.IsNullOrEmpty(manacolor + manaclass + level + school + subschool + descriptor + bytext + bytitle + random))
             {
@@ -234,11 +235,15 @@ namespace skyforger.Controllers
 
             if (!string.IsNullOrEmpty(random))
             {
+                var takecount = 20;
                 var validbool = bool.TryParse(random, out bool result);
                 if (validbool && result)
                 {
-                    var randspell = new Random();
-                    spells = spells.Skip(randspell.Next(0, spells.Count)).Take(1).ToList();
+                    if (spells.Count > takecount)
+                    {
+                        var randspell = new Random();
+                        spells = spells.Skip(randspell.Next(0, spells.Count)).Take(takecount).ToList();
+                    }
                 }
             }
             
