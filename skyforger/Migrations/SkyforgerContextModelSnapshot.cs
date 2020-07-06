@@ -7,8 +7,8 @@ using skyforger.models;
 
 namespace skyforger.Migrations
 {
-    [DbContext(typeof(SkyforgerContext))]
-    partial class SkyforgerContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(SpellsContext))]
+    partial class SpellsContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

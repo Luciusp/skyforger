@@ -56,7 +56,7 @@ namespace skyforger.Utilities
             {
 
                 using var scope = _scopefactory.CreateScope();
-                var sfc = scope.ServiceProvider.GetRequiredService<SkyforgerContext>();
+                var sfc = scope.ServiceProvider.GetRequiredService<SpellsContext>();
 
                 //fetch home page html
                 using var request = new HttpRequestMessage(HttpMethod.Get,

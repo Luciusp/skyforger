@@ -31,15 +31,15 @@ namespace skyforger.Controllers
         private readonly IHttpClientFactory _httpfactory;
         private readonly IConfiguration _config;
         private List<Error> _errors = new List<Error>();
-        private readonly SkyforgerContext _sfc;
+        private readonly SpellsContext _sc;
 
         public PortalSync(ILogger<PortalSync> logger, IHttpClientFactory httpfactory, IConfiguration config,
-            SkyforgerContext sfc)
+            SpellsContext sc)
         {
             _logger = logger;
             _httpfactory = httpfactory;
             _config = config;
-            _sfc = sfc;
+            _sc = sc;
         }
 
         //performs full sync of spells
@@ -105,7 +105,7 @@ namespace skyforger.Controllers
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/enhance-familiar";
                     //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/lookingglass";
                     
-                    var existingentity = _sfc.Spells.FirstOrDefault(t => t.SpellUri == spelluri);
+                    var existingentity = _sc.Spells.FirstOrDefault(t => t.SpellUri == spelluri);
                     if (existingentity != null)
                         continue;
 
@@ -118,9 +118,9 @@ namespace skyforger.Controllers
                     if (spellscraperesult.spell.Valid || !spellscraperesult.errors.Any())
                     {
                         _logger.LogInformation("Adding new spell");
-                        _sfc.Add(spellscraperesult.spell);
+                        _sc.Add(spellscraperesult.spell);
 
-                        await _sfc.SaveChangesAsync();
+                        await _sc.SaveChangesAsync();
                     }
                     else
                     {

@@ -30,7 +30,7 @@ namespace skyforger
         {
             services.AddControllers();
             services.AddHttpClient();
-            services.AddEntityFrameworkSqlite().AddDbContext<SkyforgerContext>();
+            services.AddEntityFrameworkSqlite().AddDbContext<SpellsContext>();
             services.AddHostedService<PortalWatcher>();
         }
 

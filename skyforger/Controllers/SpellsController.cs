@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Text;
 using System.Threading.Tasks;
 using AngleSharp;
 using Microsoft.AspNetCore.Mvc;
@@ -21,19 +23,25 @@ namespace skyforger.Controllers
     public class SpellsController : ControllerBase
     {
         private readonly ILogger<SpellsController> _logger;
-        private readonly SkyforgerContext _sfc;
+        private readonly SpellsContext _sc;
         
-        public SpellsController(ILogger<SpellsController> logger, SkyforgerContext sfc)
+        public SpellsController(ILogger<SpellsController> logger, SpellsContext sc)
         {
             _logger = logger;
-            _sfc = sfc;
+            _sc = sc;
+        }
+        
+        [Route("")]
+        public async Task<IActionResult> Index()
+        {
+            return Content(System.IO.File.ReadAllText("wwwroot/spells.html"), "text/html", Encoding.UTF8);
         }
         
         [Route("random")]
-        public async Task<ActionResult> RandomSpell()
+        public async Task<IActionResult> RandomSpell()
         {
             var randspell = new Random();
-            var spells = _sfc.Spells
+            var spells = _sc.Spells
                 .Include(t => t.Action)
                 .Include(t => t.Components)
                 .Include(t => t.Descriptor)
@@ -50,13 +58,13 @@ namespace skyforger.Controllers
         [Route("names")]
         public async Task<IActionResult> GetSpellNames()
         {
-            return Ok(_sfc.Spells.Select(t => new {t.Name, t.SpellUri}).ToList());
+            return Ok(_sc.Spells.Select(t => new {t.Name, t.SpellUri}).ToList());
         }
 
         [Route("find")]
         public async Task<IActionResult> FindSpellByName()
         {
-            var spells = _sfc.Spells
+            var spells = _sc.Spells
                 .Include(t => t.Action)
                 .Include(t => t.Components)
                 .Include(t => t.Descriptor)
@@ -75,7 +83,7 @@ namespace skyforger.Controllers
         [Route("test")]
         public async Task<IActionResult> Test(string query)
         {
-            var spells = _sfc.Spells
+            var spells = _sc.Spells
                 .Include(t => t.Action)
                 .Include(t => t.Components)
                 .Include(t => t.Descriptor)
@@ -110,7 +118,7 @@ namespace skyforger.Controllers
                 return StatusCode(400, "Invalid query");
             }
             
-            var spells = _sfc.Spells
+            var spells = _sc.Spells
                 .Include(t => t.Action)
                 .Include(t => t.Components)
                 .Include(t => t.Descriptor)

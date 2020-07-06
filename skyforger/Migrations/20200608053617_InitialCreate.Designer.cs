@@ -8,7 +8,7 @@ using skyforger.models;
 
 namespace skyforger.Migrations
 {
-    [DbContext(typeof(SkyforgerContext))]
+    [DbContext(typeof(SpellsContext))]
     [Migration("20200608053617_InitialCreate")]
     partial class InitialCreate
     {

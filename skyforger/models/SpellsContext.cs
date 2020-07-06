@@ -5,7 +5,7 @@ using skyforger.models.spells;
 
 namespace skyforger.models
 {
-    public class SkyforgerContext : DbContext
+    public class SpellsContext : DbContext
     {
         public DbSet<Spell> Spells { get; set; }
         public DbSet<SpellSchool> SpellSchools { get; set; }
@@ -15,7 +15,7 @@ namespace skyforger.models
         public DbSet<ManaClass> ManaClasses { get; set; }
         
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("Data Source=source.db");
+            => options.UseSqlite("Data Source=spells.db");
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
