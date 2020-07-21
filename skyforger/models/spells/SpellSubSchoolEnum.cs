@@ -1,9 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace skyforger.models.spells
 {
     public enum SpellSubSchoolEnum
     {
         //Catch-all
         None,
+        [Display(Name = "See Text")]
         See_Text,
         
         //Conjuration

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace skyforger.models.common
 {
     public enum ManaTypeEnum
@@ -7,6 +9,7 @@ namespace skyforger.models.common
         Blue,
         Red,
         Green,
+        [Display(Name = "See Text")]
         See_Text
     }
 }

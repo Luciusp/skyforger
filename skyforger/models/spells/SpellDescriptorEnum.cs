@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace skyforger.models.spells
 {
     public enum SpellDescriptorEnum
@@ -22,10 +24,12 @@ namespace skyforger.models.spells
         Force,
         Good,
         Glyph,
+        [Display(Name = "Language Dependent")]
         Language_Dependent,
         Lawful,
         Light,
         Maneuver,
+        [Display(Name = "Mind Affecting")]
         Mind_Affecting,
         Pain,
         Poison,
@@ -33,6 +37,7 @@ namespace skyforger.models.spells
         Runic,
         Sacred,
         Scrying,
+        [Display(Name = "See Text")]
         See_Text,
         Shadow,
         Sonic,

@@ -1,0 +1,53 @@
+@using skyforger.Controllers
+@using skyforger.models.common
+@using skyforger.models.spells
+@model skyforger.models.spells.SpellSearch
+@{
+    ViewData["Title"] = "Spells";
+}
+<!DOCTYPE html>
+
+<html>
+<body>
+<div class="d-flex justify-content-center">
+    @using (Html.BeginForm("Index", "Spells", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary()
+        @Html.LabelFor(t => t.ManaColor)
+        @Html.DropDownListFor(t => t.ManaColor, Html.GetEnumSelectList<ManaTypeEnum>(),
+            "Any", new {@class = "form-control ss-form-entry"})
+        @Html.LabelFor(t => t.ManaClass)
+        @Html.DropDownListFor(t => t.ManaClass, Html.GetEnumSelectList<ManaClassEnum>(),
+            "Any", new {@class = "form-control ss-form-entry"})
+        @Html.LabelFor(t => t.SpellLevelLowerBound, new {@class = "ss-form-label"})
+        @Html.TextBoxFor(t => t.SpellLevelLowerBound, new {@class = "form-control ss-form-entry ss-form-level-bounds", @placeholder = "Any"})
+        @Html.Raw(" to ")
+        @Html.TextBoxFor(t => t.SpellLevelUpperBound, new {@class = "form-control ss-form-entry ss-form-level-bounds", @placeholder = "Any"})
+        @Html.LabelFor(t => t.SpellSchool, new {@class = "ss-form-label"})
+        @Html.DropDownListFor(t => t.SpellSchool, Html.GetEnumSelectList<SpellSchoolEnum>(),
+            "Any", new {@class = "form-control ss-form-entry"})
+        ;
+        @Html.LabelFor(t => t.SpellSubSchool)
+        @Html.DropDownListFor(t => t.SpellSubSchool, Html.GetEnumSelectList<SpellSubSchoolEnum>(),
+            "Any", new {@class = "form-control ss-form-entry"})
+        ;
+        @Html.LabelFor(t => t.SpellDescriptor)
+        @Html.DropDownListFor(t => t.SpellDescriptor, Html.GetEnumSelectList<SpellDescriptorEnum>(),
+            "Any", new {@class = "form-control ss-form-entry"})
+        @Html.LabelFor(t => t.TitleContainsWords)
+        @Html.TextBoxFor(t => t.TitleContainsWords, new {@class = "form-control ss-form-entry", @placeholder = "Any"})
+        @Html.LabelFor(t => t.DescriptionContainsWords)
+        @Html.TextBoxFor(t => t.DescriptionContainsWords, new {@class = "form-control ss-form-entry", @placeholder = "Any"})
+        @Html.CheckBoxFor(t => t.FuzzyMatchDescription, new {@class = "ss-form-check"})
+        @Html.LabelFor(t => t.FuzzyMatchDescription)
+        @Html.Raw("<br>")
+        @Html.CheckBoxFor(t => t.IsRandom, new {@class = "ss-form-check"})
+        @Html.LabelFor(t => t.IsRandom)
+        <div class="ss-btn-submit-area">
+            <input class="btn btn-primary ss-btn-submit" type="submit" name="submit" value="Search"/>
+        </div>
+    }
+</div>
+</body>
+</html>

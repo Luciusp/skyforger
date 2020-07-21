@@ -1,26 +1,17 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Linq.Dynamic.Core;
-using System.Text;
 using System.Threading.Tasks;
-using AngleSharp;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.WebEncoders.Testing;
-using Newtonsoft.Json;
 using skyforger.models;
-using skyforger.models.common;
 using skyforger.models.spells;
 
 namespace skyforger.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class SpellsController : ControllerBase
+    public class SpellsController : Controller
     {
         private readonly ILogger<SpellsController> _logger;
         private readonly SpellsContext _sc;
@@ -31,38 +22,20 @@ namespace skyforger.Controllers
             _sc = sc;
         }
         
-        [Route("")]
+        // GET
         public async Task<IActionResult> Index()
         {
-            return Content(System.IO.File.ReadAllText("wwwroot/spells.html"), "text/html", Encoding.UTF8);
-        }
-        
-        [Route("random")]
-        public async Task<IActionResult> RandomSpell()
-        {
-            var randspell = new Random();
-            var spells = _sc.Spells
-                .Include(t => t.Action)
-                .Include(t => t.Components)
-                .Include(t => t.Descriptor)
-                .Include(t => t.Focus)
-                .Include(t => t.Mana)
-                .Include(t => t.School)
-                .Include(t => t.ManaClass)
-                .Include(t => t.SubSchool)
-                .Include(t => t.MaterialComponents)
-                .ToList();
-            return Ok(spells.Skip(randspell.Next(0, spells.Count)).Take(1));
+            return View();
         }
 
-        [Route("names")]
-        public async Task<IActionResult> GetSpellNames()
+        [HttpPost]
+        public async Task<IActionResult> Index([FromForm] SpellSearch searchparams)
         {
-            return Ok(_sc.Spells.Select(t => new {t.Name, t.SpellUri}).ToList());
+            ViewData["spells"] = await FindSpells(searchparams);
+            return View("SpellSearchResults");
         }
 
-        [Route("find")]
-        public async Task<IActionResult> FindSpellByName()
+        private async Task<List<Spell>> FindSpells(SpellSearch searchparams)
         {
             var spells = _sc.Spells
                 .Include(t => t.Action)
@@ -73,198 +46,65 @@ namespace skyforger.Controllers
                 .Include(t => t.School)
                 .Include(t => t.ManaClass)
                 .Include(t => t.SubSchool)
-                .Include(t => t.MaterialComponents)
-                .ToList();
-
+                .Include(t => t.MaterialComponents).ToList();
             
-            return Ok();
-        }
-
-        [Route("test")]
-        public async Task<IActionResult> Test(string query)
-        {
-            var spells = _sc.Spells
-                .Include(t => t.Action)
-                .Include(t => t.Components)
-                .Include(t => t.Descriptor)
-                .Include(t => t.Focus)
-                .Include(t => t.Mana)
-                .Include(t => t.School)
-                .Include(t => t.ManaClass)
-                .Include(t => t.SubSchool)
-                .Include(t => t.MaterialComponents);
-
-            var help = spells.Where(t => t.Mana.Any(v => v.ManaTypeEnum == ManaTypeEnum.Red) && t.Mana.Any(t => t.ManaTypeEnum == ManaTypeEnum.Blue) && !t.Mana.Any(v => v.ManaTypeEnum == ManaTypeEnum.Black));
-            var test = spells.Where($"Mana.Any(ManaTypeEnum == ManaTypeEnum.{query} && ManaTypeEnum != ManaTypeEnum.Black)", 1).ToList();
-            return Ok(JsonConvert.SerializeObject(help));
-        }
-        
-        [Route("find/advanced")]
-        public async Task<IActionResult> FindSpells(
-            string manacolor, 
-            string manaclass, 
-            string level, 
-            string school, 
-            string subschool, 
-            string descriptor,
-            string bytext,
-            string bytitle,
-            string fuzzymatch,
-            string random
-            )
-        {
-            if (string.IsNullOrEmpty(manacolor + manaclass + level + school + subschool + descriptor + bytext + bytitle + random))
+            if (searchparams.ManaColor != null)
             {
-                return StatusCode(400, "Invalid query");
+                spells = spells.Where(t => t.Mana.Any(v => v.ManaTypeEnum == searchparams.ManaColor)).ToList();
             }
-            
-            var spells = _sc.Spells
-                .Include(t => t.Action)
-                .Include(t => t.Components)
-                .Include(t => t.Descriptor)
-                .Include(t => t.Focus)
-                .Include(t => t.Mana)
-                .Include(t => t.School)
-                .Include(t => t.ManaClass)
-                .Include(t => t.SubSchool)
-                .Include(t => t.MaterialComponents)
-                .ToList();
 
-            if (!string.IsNullOrEmpty(manacolor) && manacolor.ToLower() != "none")
+            if (searchparams.ManaClass != null)
             {
-                var validcolor = Enum.TryParse(manacolor, true, out ManaTypeEnum parsedmanacolor);
-                if (validcolor)
+                spells = spells.Where(t => t.ManaClass.Any(v => v.ManaClassEnum == searchparams.ManaClass)).ToList();
+            }
+
+            if (searchparams.SpellLevelLowerBound != null)
+            {
+                spells = spells.Where(t => t.SpellLevel > searchparams.SpellLevelLowerBound).ToList();
+            }
+
+            if (searchparams.SpellLevelUpperBound != null)
+            {
+                spells = spells.Where(t => t.SpellLevel < searchparams.SpellLevelUpperBound).ToList();
+            }
+
+            if (searchparams.SpellSchool != null)
+            {
+                spells = spells.Where(t => t.School.Any(v => v.SpellSchoolEnum == searchparams.SpellSchool)).ToList();
+            }
+
+            if (searchparams.SpellSubSchool != null)
+            {
+                spells = spells.Where(t => t.SubSchool.Any(v => v.SpellSubSchoolEnum == searchparams.SpellSubSchool))
+                    .ToList();
+            }
+
+            if (searchparams.SpellDescriptor != null)
+            {
+                spells = spells.Where(t =>
+                    t.Descriptor.Any(v => v.SpellDescriptorEnum == searchparams.SpellDescriptor)).ToList();
+            }
+
+            if (searchparams.TitleContainsWords != null)
+            {
+                spells = spells.Where(t => t.Name.ToLower().Contains(searchparams.TitleContainsWords.ToLower())).ToList();
+            }
+
+            if (searchparams.DescriptionContainsWords != null)
+            {
+                if (searchparams.FuzzyMatchDescription)
                 {
-                    spells = spells.Where(t => t.Mana.Any(v => v.ManaTypeEnum == parsedmanacolor)).ToList();
+                    spells = spells.Where(t =>
+                        t.Description.ToLower().Contains(searchparams.DescriptionContainsWords.ToLower())).ToList();
                 }
                 else
                 {
-                    return StatusCode(400, "Invalid mana color");
+                    spells = spells.Where(t =>
+                        t.Description.ToLower().Contains($" {searchparams.DescriptionContainsWords.ToLower()} ")).ToList();
                 }
             }
 
-            if (!string.IsNullOrEmpty(manaclass) && manaclass.ToLower() != "none")
-            {
-                var validclass = Enum.TryParse(manaclass, true, out ManaClassEnum parsedmanaclass);
-                if (validclass)
-                {
-                    spells = spells.Where(t => t.ManaClass.Any(v => v.ManaClassEnum == parsedmanaclass)).ToList();
-                }
-                else
-                {
-                    return StatusCode(400, "Invalid mana class");
-                }
-            }
-            
-            if (!string.IsNullOrEmpty(level) && level.ToLower() != "any")
-            {
-                var levelsplit = level.Split("-");
-                var validints = new List<int>();
-                foreach (var levelcheck in levelsplit)
-                {
-                    if (Int32.TryParse(levelcheck, out int intval))
-                    {
-                        validints.Add(intval);
-                    }
-                    else
-                    {
-                        return StatusCode(400, "Invalid level. Make sure it's a number");
-                    }
-                }
-                validints.Sort();
-                var levelrange = new List<int>();
-                if (validints.Count < 2)
-                    levelrange.Add(validints.First());
-                else
-                {
-                    levelrange = Enumerable.Range(validints[0], validints[1] - validints[0] +1).ToList();
-                }
-                
-                spells = spells.Where(t =>levelrange.Contains(t.SpellLevel)).ToList();
-            }
-            
-            if (!string.IsNullOrEmpty(school) && school.ToLower() != "none")
-            {
-                var validschool = Enum.TryParse(school, true, out SpellSchoolEnum parsedschool);
-                if (validschool)
-                {
-                    spells = spells.Where(t => t.School.Any(v => v.SpellSchoolEnum == parsedschool)).ToList();
-                }
-                else
-                {
-                    return StatusCode(400, "Invalid school");
-                }
-            }
-            
-            if (!string.IsNullOrEmpty(subschool) && subschool.ToLower() != "none")
-            {
-                var validsubschool = Enum.TryParse(subschool, true, out SpellSubSchoolEnum parsedsubschool);
-                if (validsubschool)
-                {
-                    spells = spells.Where(t => t.SubSchool.Any(v => v.SpellSubSchoolEnum == parsedsubschool)).ToList();
-                }
-                else
-                {
-                    return StatusCode(400, "Invalid subschool");
-                }
-            }
-            
-            if (!string.IsNullOrEmpty(descriptor) && descriptor.ToLower() != "none")
-            {
-                var validdescriptor = Enum.TryParse(descriptor, true, out SpellDescriptorEnum parseddescriptor);
-                if (validdescriptor)
-                {
-                    spells = spells.Where(t => t.Descriptor.Any(v => v.SpellDescriptorEnum == parseddescriptor)).ToList();
-                }
-                else
-                {
-                    return StatusCode(400, "Invalid descriptor");
-                }
-            }
-
-            if (!string.IsNullOrEmpty(bytext) && bytext.ToLower() != "any")
-            {
-                var validfuzzy = bool.TryParse(fuzzymatch, out bool fuzzy);
-                if (validfuzzy && fuzzy)
-                {
-                    bytext = bytext.ToLower();
-                }
-                else bytext = $" {bytext.ToLower()} ";
-                
-                spells = spells.Where(t => t.Description.ToLower().Contains(bytext)).ToList();
-            }
-            
-            if (!string.IsNullOrEmpty(bytitle) && bytitle.ToLower() != "any")
-            {
-                bytitle = bytitle.ToLower();
-                
-                spells = spells.Where(t => t.Name.ToLower().Contains(bytitle)).ToList();
-            }
-
-            if (!string.IsNullOrEmpty(random))
-            {
-                var takecount = 20;
-                var validbool = bool.TryParse(random, out bool result);
-                if (validbool && result)
-                {
-                    if (spells.Count > takecount)
-                    {
-                        var randspell = new Random();
-                        spells = spells.Skip(randspell.Next(0, spells.Count)).Take(takecount).ToList();
-                    }
-                }
-            }
-            
-            var colorcounts = new Dictionary<string, int>();
-            foreach (var color in Enum.GetValues(typeof(ManaTypeEnum)))
-            {
-                if (color.ToString() == "See_Text")
-                    continue;
-                colorcounts.Add(color.ToString(), spells.Count(t => t.Mana.Any(v => v.ManaTypeEnum == Enum.Parse<ManaTypeEnum>(color.ToString()))));
-            }
-
-            var objres = new SpellQueryResult(colorcounts, spells);
-            return Ok(JsonConvert.SerializeObject(objres));
+            return spells.ToList();
         }
     }
 }

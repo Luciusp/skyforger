@@ -9,7 +9,7 @@ a.navbar-brand {
 
 /* Provide sufficient contrast against white background */
 a {
-    color: #0366d6;
+    color: white;
 }
 
 .btn-primary {
@@ -22,6 +22,67 @@ a {
     color: #fff;
     background-color: #1b6ec2;
     border-color: #1861ac;
+}
+
+/* Spell search */
+.ss-btn-submit-area
+{
+    margin-top: 1em;
+    display:block;
+}
+
+.ss-btn-submit
+{
+    width: 15em;
+}
+
+.ss-form-entry
+{
+    display: block;
+    margin-bottom: 1em;
+    width: 15em;
+}
+
+.ss-form-level-bounds
+{
+    display:inline;
+    width: 6.8em;
+}
+
+.ss-form-label
+{
+    display:block;
+}
+
+.ss-form-check
+{
+    display:inline;
+    margin-right: 5px;
+}
+
+.spell-card
+{
+    border: 1px solid white;
+    margin-bottom: 7px;
+    background-color: rgba(45, 20, 44, 1);
+    opacity: 0.75;
+}
+
+.card-header
+{
+    background-color: #351833;
+    font-size: 21px;
+}
+
+.card-body
+{
+    /*background-color: #4b86b4;*/
+    font-size: 18px;
+}
+
+a.spell-title
+{
+    color: white;
 }
 
 /* Sticky footer styles
@@ -60,12 +121,13 @@ html {
 
 body {
     /* Margin bottom by footer height */
+    background: rgb(82,13,35);
+    background: radial-gradient(circle, rgba(82,13,35,1) 0%, rgba(45,20,44,1) 100%);
     margin-bottom: 60px;
+    color: white;
 }
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    white-space: nowrap;
-    line-height: 60px; /* Vertically center the text there */
+
+.header {
+    background-color: #2D142C;
+    color: white
 }

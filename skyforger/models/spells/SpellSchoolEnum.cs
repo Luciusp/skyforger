@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace skyforger.models.spells
 {
     public enum SpellSchoolEnum
@@ -12,6 +14,7 @@ namespace skyforger.models.spells
         Illusion,
         Necromancy,
         Sangromancy,
+        [Display(Name = "See Text")]
         See_Text,
         Transmutation,
         Universal
