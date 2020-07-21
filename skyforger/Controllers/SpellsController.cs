@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using skyforger.models;
 using skyforger.models.spells;
+using skyforger.Utilities;
 
 namespace skyforger.Controllers
 {
@@ -101,6 +103,17 @@ namespace skyforger.Controllers
                 {
                     spells = spells.Where(t =>
                         t.Description.ToLower().Contains($" {searchparams.DescriptionContainsWords.ToLower()} ")).ToList();
+                }
+            }
+
+            if (searchparams.IsRandom)
+            {
+                const int takecount = 20;
+                if (spells.Count > takecount)
+                {
+                    spells.Shuffle();
+                    var randspell = new Random();
+                    return spells.Skip(randspell.Next(0, spells.Count)).Take(takecount).ToList();
                 }
             }
 
