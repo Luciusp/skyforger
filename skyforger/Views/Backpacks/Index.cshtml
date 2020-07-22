@@ -1,0 +1,8 @@
+@using System.Security.Claims
+<!DOCTYPE html>
+
+<html>
+<body>
+@Html.Raw(User.FindFirstValue(ClaimTypes.NameIdentifier))
+</body>
+</html>

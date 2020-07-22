@@ -22,7 +22,7 @@
                         <a class="nav-link text-light" asp-area="" asp-controller="Spells" asp-action="Index">Spells</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Backpacks</a>
+                        <a class="nav-link text-light" asp-area="" asp-controller="Backpacks" asp-action="Index">Backpacks</a>
                     </li>
                 </ul>
             </div>
@@ -31,7 +31,7 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li>
-                            <button id="qsLogoutBtn" class="btn btn-danger" asp-controller="Account" asp-action="Logout">Logout</button>
+                            <a id="qsLogoutBtn" asp-controller="Account" asp-action="Logout">Logout</a>
                         </li>
                     }
                     else
