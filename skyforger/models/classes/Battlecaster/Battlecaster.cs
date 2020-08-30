@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using skyforger.models.common;
+using skyforger.models.common.Skills;
 
 namespace skyforger.models.classes
 {
@@ -37,6 +38,10 @@ namespace skyforger.models.classes
         };
 
         public static int[] BonusFeatsGainedAtLevel = {4,8,12,16,20};
-        
+
+        public static void AddClass()
+        {
+            
+        }
     }
 }

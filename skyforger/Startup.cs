@@ -14,7 +14,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using skyforger.Controllers;
 using skyforger.models;
+using skyforger.models.backpacks;
+using skyforger.models.player;
 using skyforger.Utilities;
 
 namespace skyforger
@@ -104,6 +107,7 @@ namespace skyforger
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddHttpClient();
             services.AddEntityFrameworkSqlite().AddDbContext<SpellsContext>();
+            services.AddEntityFrameworkSqlite().AddDbContext<BackpacksContext>();
             services.AddHostedService<PortalWatcher>();
         }
 
@@ -123,7 +127,6 @@ namespace skyforger
             
 
             app.UseStaticFiles();
-            app.UseCookiePolicy();
 
             app.UseRouting();
 

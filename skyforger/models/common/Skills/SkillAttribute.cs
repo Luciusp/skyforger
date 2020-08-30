@@ -1,6 +1,6 @@
 using System;
 
-namespace skyforger.models.common
+namespace skyforger.models.common.Skills
 {
     [AttributeUsage(AttributeTargets.Field)]
     public class SkillAttribute : Attribute

@@ -13,7 +13,7 @@
     @foreach (var spell in (IList<Spell>) ViewData["Spells"])
     {
         <div class="card spell-card rounded">
-            <div class="card-header">
+            <div class="card-header spell-card-header">
                 <a class="spell-title" href=@spell.SpellUri target="_blank">
                     @Html.Raw(spell.Name)
                     <svg class="external-link-icon"
@@ -34,7 +34,7 @@
                     </svg>
                 </a>
             </div>
-            <div class="card-body rounded">
+            <div class="card-body spell-card-body rounded">
                 School: @Html.Raw(spell.SchoolRaw + "<br>")
                 Level: @Html.Raw(spell.SpellLevel + "<br><br>")
                 @Html.Raw(spell.Description)
