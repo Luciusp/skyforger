@@ -1,6 +1,27 @@
+@using System.Security.Claims
+@model skyforger.models.player.Player
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-</div>
+<body>
+@if (ViewData["playerdata"] == null && User.Identity.IsAuthenticated)
+{
+    <div class="d-flex justify-content-center">
+        @using (Html.BeginForm("CreatePlayer", "Players", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary()
+            @Html.Raw("What is your username?")
+            @Html.TextBoxFor(t => t.Username, new {@class = "form-control ss-form-entry", @placeholder = "John Snow"})
+            @Html.Raw("What is your character's name? (First and last)")
+            @Html.TextBoxFor(t => t.CharacterName, new {@class = "form-control ss-form-entry", @placeholder = "Emil Martin"})
+            @Html.LabelFor(t => t.ProfilePictureUri)
+            @Html.TextBoxFor(t => t.ProfilePictureUri, new {@class = "form-control ss-form-entry"})
+            <div class="ss-btn-submit-area">
+                <input class="btn btn-primary ss-btn-submit" type="submit" name="submit" value="Submit"/>
+            </div>
+        }
+    </div>
+}
+</body>

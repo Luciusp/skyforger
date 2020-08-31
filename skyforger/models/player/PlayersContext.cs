@@ -1,13 +1,14 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
-namespace skyforger.models.backpacks
+namespace skyforger.models.player
 {
-    public class BackpacksContext : DbContext
+    public class PlayersContext: DbContext
     {
-        public DbSet<BackpackItem> Backpacks { get; set; }
+        public DbSet<Player> Players { get; set; }
+        
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("Data Source=backpacks.db");
+            => options.UseSqlite("Data Source=players.db");
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

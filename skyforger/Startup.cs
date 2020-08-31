@@ -108,6 +108,7 @@ namespace skyforger
             services.AddHttpClient();
             services.AddEntityFrameworkSqlite().AddDbContext<SpellsContext>();
             services.AddEntityFrameworkSqlite().AddDbContext<BackpacksContext>();
+            services.AddEntityFrameworkSqlite().AddDbContext<PlayersContext>();
             services.AddHostedService<PortalWatcher>();
         }
 
