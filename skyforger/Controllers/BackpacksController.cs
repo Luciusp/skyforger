@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using skyforger.models.backpacks;
@@ -30,8 +32,7 @@ namespace skyforger.Controllers
         {
             var currentplayer = _pc.Players.FirstOrDefault(t => t.Auth0Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
             ViewData["playerdata"] = currentplayer;
-
-
+            
             if (currentplayer == null)
             {
                 return Redirect("/");
@@ -73,6 +74,14 @@ namespace skyforger.Controllers
         {
             ViewData["Player"] = _pc.Players.FirstOrDefault(t => t.Id == id);
             return View();
+        }
+
+        [HttpPost]
+        [Route("additems")]
+        public async Task<IActionResult> AddItems([FromBody] List<BackpackItem> items)
+        {
+            
+            return Ok();
         }
     }
 }
