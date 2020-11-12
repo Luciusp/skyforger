@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -28,16 +29,19 @@ namespace skyforger
                 .AddJsonFile($"appsettings.{environment.ToLower()}.json", optional: true)
                 .AddEnvironmentVariables()
                 .Build();
-            CreateHostBuilder(args, config).Build().Run();
+            CreateWebHostBuilder(args, environment).Build().Run();
+            
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args, IConfigurationRoot config) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args, string environment) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseKestrel((config, t) =>
                 {
-                    webBuilder.UseUrls("http://*:80");
-                    webBuilder.UseConfiguration(config);
-                    webBuilder.UseStartup<Startup>();
-                });
+                    var certfile = config.Configuration["Ssl:CertFile"];
+                    t.ListenAnyIP(5000);
+                    t.ListenAnyIP(443, lo => { lo.UseHttps(certfile, config.Configuration["CERT_PASSWORD"]); });
+                    
+                })
+                .UseStartup<Startup>();
     }
 }

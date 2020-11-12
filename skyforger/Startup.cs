@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using LettuceEncrypt;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -102,7 +104,6 @@ namespace skyforger
                 };
             });
             
-            //services.AddControllers();
             services.AddRazorPages();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddHttpClient();
@@ -118,6 +119,7 @@ namespace skyforger
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseHttpsRedirection();
             }
             else
             {
@@ -130,7 +132,6 @@ namespace skyforger
             app.UseStaticFiles();
 
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 
