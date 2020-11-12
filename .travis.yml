@@ -1,7 +1,0 @@
-language: csharp
-solution: skyforger.sln
-mono: none
-dotnet: 5.0
-script:
-  - dotnet restore
-  - dotnet build

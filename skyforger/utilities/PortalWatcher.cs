@@ -114,6 +114,7 @@ namespace skyforger.Utilities
             catch (Exception e)
             {
                 _logger.LogError("Unable to complete watcher request", e);
+                Console.WriteLine(e.Message);
             }
         }
     }
