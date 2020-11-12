@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace skyforger.models.common
 {
     public enum Languages
@@ -11,9 +13,11 @@ namespace skyforger.models.common
         Celestial,
         Common,
         Cyclops,
-        Dark_Folk,
+        [Display(Name = "Dark Folk")]
+        DarkFolk,
         Draconic,
-        Drow_Sign_Language,
+        [Display(Name = "Drow Sign Language")]
+        DrowSignLanguage,
         Druidic,
         Dwarven,
         Dziriak,

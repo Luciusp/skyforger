@@ -1,6 +1,8 @@
 @using skyforger.models.spells
 @{
     ViewData["Title"] = "Spells";
+    var spells = (IList<Spell>) ViewData["Spells"];
+    var colorcounts = (IDictionary<string, int>) ViewData["ColorCounts"];
 }
 <!DOCTYPE html>
 
@@ -10,10 +12,21 @@
 </head>
 <body>
 <div>
-    @foreach (var spell in (IList<Spell>) ViewData["Spells"])
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">@Html.Raw($"Results: {spells.Count}")</div>
+            @foreach (var color in colorcounts)
+            {
+                <div class="col-sm">@Html.Raw($"{color.Key}: {color.Value}")</div>
+            }
+        </div>
+    </div>
+
+
+    @foreach (var spell in spells)
     {
         <div class="card spell-card rounded">
-            <div class="card-header">
+            <div class="card-header spell-card-header">
                 <a class="spell-title" href=@spell.SpellUri target="_blank">
                     @Html.Raw(spell.Name)
                     <svg class="external-link-icon"
@@ -34,9 +47,9 @@
                     </svg>
                 </a>
             </div>
-            <div class="card-body rounded">
+            <div class="card-body spell-card-body rounded">
                 School: @Html.Raw(spell.SchoolRaw + "<br>")
-                Level: @Html.Raw(spell.SpellLevel + "<br><br>")
+                Level: @Html.Raw(spell.ManaDescription) @Html.Raw(spell.SpellLevel + "<br><br>")
                 @Html.Raw(spell.Description)
             </div>
         </div>

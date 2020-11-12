@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace skyforger.models.creatures
 {
     public enum CreatureType
@@ -8,8 +10,10 @@ namespace skyforger.models.creatures
         Dragon,
         Fey,
         Humanoid,
-        Magical_Beast,
-        Monstrous_Humanoid,
+        [Display(Name = "Magical Beast")]
+        MagicalBeast,
+        [Display(Name = "Monstrous Humanoid")]
+        MonstrousHumanoid,
         Ooze,
         Outsider,
         Plant,

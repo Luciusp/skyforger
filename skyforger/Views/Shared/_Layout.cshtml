@@ -9,7 +9,7 @@
 </head>
 <body>
 <header class="header">
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-inverse border-bottom box-shadow mb-3">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3">
         <div class="container">
             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Skyforger</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -22,8 +22,14 @@
                         <a class="nav-link text-light" asp-area="" asp-controller="Spells" asp-action="Index">Spells</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Backpacks</a>
+                        <a class="nav-link text-light" asp-area="" asp-controller="Backpacks" asp-action="Index">Backpacks</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" asp-area="" asp-controller="ChallengeRatingCalculator" asp-action="Index">CR Calculator</a>
+                    </li>
+                    @* <li class="nav-item"> *@
+                    @*     <a class="nav-link text-light" asp-area="" asp-controller="Character" asp-action="Index">Characters</a> *@
+                    @* </li> *@
                 </ul>
             </div>
             <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
@@ -31,13 +37,13 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li>
-                            <button id="qsLogoutBtn" class="btn btn-danger" asp-controller="Account" asp-action="Logout">Logout</button>
+                            <a class="nav-link text-light" id="qsLogoutBtn" asp-controller="Account" asp-action="Logout">Logout</a>
                         </li>
                     }
                     else
                     {
                         <li>
-                            <a id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login</a>
+                            <a class="nav-link text-light" id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login</a>
                         </li>
                     }
                 </ul>

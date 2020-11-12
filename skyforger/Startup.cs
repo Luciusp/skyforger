@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using LettuceEncrypt;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -14,7 +16,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using skyforger.Controllers;
 using skyforger.models;
+using skyforger.models.backpacks;
+using skyforger.models.player;
 using skyforger.Utilities;
 
 namespace skyforger
@@ -99,11 +104,12 @@ namespace skyforger
                 };
             });
             
-            //services.AddControllers();
             services.AddRazorPages();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddHttpClient();
             services.AddEntityFrameworkSqlite().AddDbContext<SpellsContext>();
+            services.AddEntityFrameworkSqlite().AddDbContext<BackpacksContext>();
+            services.AddEntityFrameworkSqlite().AddDbContext<PlayersContext>();
             services.AddHostedService<PortalWatcher>();
         }
 
@@ -113,6 +119,7 @@ namespace skyforger
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseHttpsRedirection();
             }
             else
             {
@@ -123,10 +130,8 @@ namespace skyforger
             
 
             app.UseStaticFiles();
-            app.UseCookiePolicy();
 
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 

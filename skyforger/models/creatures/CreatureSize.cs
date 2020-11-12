@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace skyforger.models.creatures
 {
     public enum CreatureSize
@@ -7,13 +9,21 @@ namespace skyforger.models.creatures
         Tiny,
         Small,
         Medium,
-        Large_Tall,
-        Large_Long,
-        Huge_Tall,
-        Huge_Long,
-        Gargantuan_Tall,
-        Gargantuan_Long,
-        Colossal_Tall,
-        Colossal_Long
+        [Display(Name = "Large (Tall)")]
+        LargeTall,
+        [Display(Name = "Large (Long)")]
+        LargeLong,
+        [Display(Name = "Huge (Tall)")]
+        HugeTall,
+        [Display(Name = "Huge (Long)")]
+        HugeLong,
+        [Display(Name = "Gargantuan (Tall)")]
+        GargantuanTall,
+        [Display(Name = "Gargantuan (Long)")]
+        GargantuanLong,
+        [Display(Name = "Colossal (Tall)")]
+        ColossalTall,
+        [Display(Name = "Colossal (Long)")]
+        ColossalLong
     }
 }

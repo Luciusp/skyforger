@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace skyforger.models.creatures
 {
     public enum CreatureSubType
@@ -5,7 +7,8 @@ namespace skyforger.models.creatures
         Adlet,
         Aeon,
         Agathion,
-        Artifice_Creation,
+        [Display(Name = "Artifice Creation")]
+        ArtificeCreation,
         Air,
         Angel,
         Aquatic,
@@ -21,8 +24,10 @@ namespace skyforger.models.creatures
         Cold,
         Colossus,
         Daemon,
-        Dark_Folk,
-        Deep_One,
+        [Display(Name = "Dark Folk")]
+        DarkFolk,
+        [Display(Name = "Deep One")]
+        DeepOne,
         Demodand,
         Demon,
         Devil,
@@ -40,7 +45,8 @@ namespace skyforger.models.creatures
         Goblinoid,
         Godspawn,
         Good,
-        Great_Old_One,
+        [Display(Name = "Great Old One")]
+        GreatOldOne,
         Halfling,
         Herald,
         Hive,
@@ -78,7 +84,8 @@ namespace skyforger.models.creatures
         Vishkanya,
         Water,
         Wayang,
-        Wild_Hunt,
+        [Display(Name = "Wild Hunt")]
+        WildHunt,
         Wurm
     }
 }

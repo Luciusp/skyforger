@@ -1,0 +1,61 @@
+@using skyforger.models.backpacks
+@using skyforger.models.player
+@{
+    ViewData["Title"] = "Backpacks";
+}
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        @foreach (var player in ((IList<Player>) ViewData["Players"]))
+        {
+            @if (player.Username.ToLower() == "ixith")
+            {
+                continue;
+            }
+            @if (player.Username.ToLower() == "party backpack")
+            {
+                var allitemscount = ((List<BackpackItem>) ViewData["Backpack"]).Count;
+                var allitemsweight = ((List<BackpackItem>) ViewData["Backpack"]).Sum(t => t.Weight);
+                <div class="character-index-card" style="width: 20rem; margin-left: 10px; margin-right: 10px; margin-bottom: 15px;">
+                    <a asp-action="AllItems"/>
+                    <img class="card-img-top" style="height: 18rem; object-fit: cover;" src="@player.ProfilePictureUri" alt="Card image cap">
+                    <a/>
+                    <div class="card-body">
+                        <h5 class="card-title">@($"{player.CharacterName}")</h5>
+                        <ul>
+                            <li>Total Items: @allitemscount</li>
+                            <li>Weight: @allitemsweight</li>
+                        </ul>
+                        <a asp-action="AllItems" class="btn btn-primary d-flex justify-content-center">View</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                var thisplayerbackpack = ((List<BackpackItem>) ViewData["Backpack"])
+                    .Where(t => t.OwnerId == player.Id.ToString()).ToList();
+                <div class="character-index-card" style="width: 20rem; margin-left: 10px; margin-right: 10px; margin-bottom: 15px;">
+                    <a asp-controller="Backpacks" asp-action="Items" asp-route-id="@player.Id"/>
+                    <img class="card-img-top" style="height: 18rem; object-fit: cover;" src="@player.ProfilePictureUri" alt="Card image cap">
+                    <a/>
+                    <div class="card-body">
+                        <h5 class="card-title">@($"{player.CharacterName}'s Backpack")</h5>
+                        <ul>
+                            <li>Total Items: @thisplayerbackpack.Count</li>
+                            <li>Weight: @thisplayerbackpack.Sum(t => t.Weight)</li>
+                        </ul>
+                        <a asp-controller="Backpacks" asp-action="Items" asp-route-id="@player.Id" class="btn btn-primary d-flex justify-content-center">View</a>
+                    </div>
+                </div>
+            }
+        }
+    </div >
+</div>
+</body>
+</html>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using skyforger.models;
+using skyforger.models.common;
 using skyforger.models.spells;
 using skyforger.Utilities;
 
@@ -33,7 +34,18 @@ namespace skyforger.Controllers
         [HttpPost]
         public async Task<IActionResult> Index([FromForm] SpellSearch searchparams)
         {
-            ViewData["spells"] = await FindSpells(searchparams);
+            var spells = await FindSpells(searchparams);
+            var colorcounts = new Dictionary<string, int>();
+            
+            foreach (var color in Enum.GetValues(typeof(ManaTypeEnum)))
+            {
+                if (color.ToString() == "See_Text")
+                    continue;
+                colorcounts.Add(color.ToString(), spells.Count(t => t.Mana.Any(v => v.ManaTypeEnum == Enum.Parse<ManaTypeEnum>(color.ToString()))));
+            }
+            
+            ViewData["Spells"] = spells;
+            ViewData["ColorCounts"] = colorcounts;
             return View("SpellSearchResults");
         }
 
@@ -62,12 +74,12 @@ namespace skyforger.Controllers
 
             if (searchparams.SpellLevelLowerBound != null)
             {
-                spells = spells.Where(t => t.SpellLevel > searchparams.SpellLevelLowerBound).ToList();
+                spells = spells.Where(t => t.SpellLevel >= searchparams.SpellLevelLowerBound).ToList();
             }
 
             if (searchparams.SpellLevelUpperBound != null)
             {
-                spells = spells.Where(t => t.SpellLevel < searchparams.SpellLevelUpperBound).ToList();
+                spells = spells.Where(t => t.SpellLevel <= searchparams.SpellLevelUpperBound).ToList();
             }
 
             if (searchparams.SpellSchool != null)
