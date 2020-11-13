@@ -150,13 +150,13 @@ namespace skyforger.Utilities
         {
             foreach (var node in nodes)
             {
-                if (node.Name != null && node.ParentId == root.Id)
-                {
-                    _logger.LogInformation($"Downloading {node.Name}...");
-                    File.Delete(node.Name);
-                    await client.DownloadFileAsync(node, node.Name, new Progress<double>(), cancellationtoken);
-                }
+                if (node.Name == null || node.ParentId != root.Id) continue;
+                _logger.LogInformation($"Downloading {node.Name}...");
+                if(File.Exists(node.Name)) File.Delete(node.Name);
+                await client.DownloadFileAsync(node, node.Name, new Progress<double>(), cancellationtoken);
             }
+
+            await client.LogoutAsync();
         }
         
         //Downloads dbs from Mega on boot
@@ -166,14 +166,13 @@ namespace skyforger.Utilities
         {
             foreach (var node in nodes)
             {
-                if (node.Name != null && node.ParentId == root.Id)
-                {
-                    _logger.LogInformation($"Uploading {node.Name}...");
-                    //by default mega doesn't overwrite files based on name. Instead, the file will be moved to the trash
-                    //where it will remain for 30 days before being cleared out. This gives me bootleg versioning
-                    await client.DeleteAsync(node);
-                    await client.UploadFileAsync(node.Name, root, new Progress<double>());
-                }
+                if (node.Name == null || node.ParentId != root.Id) continue;
+                _logger.LogInformation($"Uploading {node.Name}...");
+                
+                //by default mega doesn't overwrite files based on name. Instead, the file will be moved to the trash
+                //where it will remain for 30 days before being cleared out. This gives me bootleg versioning
+                await client.DeleteAsync(node);
+                await client.UploadFileAsync(node.Name, root, new Progress<double>());
             }
             await client.LogoutAsync();
         }
