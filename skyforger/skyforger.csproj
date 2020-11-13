@@ -28,6 +28,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Migrations" />
+      <Folder Include="models\classes\Battlecaster" />
       <Folder Include="wwwroot\img" />
     </ItemGroup>
 

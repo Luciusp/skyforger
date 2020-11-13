@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using skyforger.models.backpacks;
@@ -30,28 +29,36 @@ namespace skyforger.Controllers
         // GET
         public async Task<IActionResult> Index()
         {
-            var currentplayer = _pc.Players.FirstOrDefault(t => t.Auth0Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
-            ViewData["playerdata"] = currentplayer;
-            
-            if (currentplayer == null)
+            try
             {
-                return Redirect("/");
+                var currentplayer = _pc.Players.FirstOrDefault(t => t.Auth0Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
+                ViewData["playerdata"] = currentplayer;
+            
+                if (currentplayer == null)
+                {
+                    return Redirect("/");
+                }
+
+                var partybackpack = new Player()
+                {
+                    Username = "Party Backpack",
+                    CharacterName = "Party Backpack",
+                    ProfilePictureUri = "https://i.imgur.com/L1zjPZv.png"
+                };
+
+                var players = _pc.Players.OrderBy(t => t.CharacterName).ToList();
+                //put party backpack first so it's rendered first
+                players.Insert(0, partybackpack);
+            
+                ViewData["Backpack"] = _bc.Backpacks.ToList();
+                ViewData["Players"] = players;
             }
-
-            var partybackpack = new Player()
+            catch (Exception e)
             {
-                Username = "Party Backpack",
-                CharacterName = "Party Backpack",
-                ProfilePictureUri = "https://i.imgur.com/L1zjPZv.png"
-            };
-
-            var players = _pc.Players.OrderBy(t => t.CharacterName).ToList();
-            //put party backpack first so it's rendered first
-            players.Insert(0, partybackpack);
+                _logger.LogError("Unable to generate backpack index", e);
+            }
             
-            ViewData["Backpack"] = _bc.Backpacks.ToList();
-            ViewData["Players"] = players;
-            return View();
+            return await Task.FromResult(View());
         }
 
         [Route("allitems")]
@@ -66,22 +73,21 @@ namespace skyforger.Controllers
 
             ViewData["Player"] = partybackpack;
             ViewData["Backpack"] = _bc.Backpacks.ToList();
-            return View();
+            return await Task.FromResult(View());
         }
 
         [Route("items")]
         public async Task<IActionResult> Items(int id)
         {
             ViewData["Player"] = _pc.Players.FirstOrDefault(t => t.Id == id);
-            return View();
+            return await Task.FromResult(View());
         }
 
         [HttpPost]
         [Route("additems")]
         public async Task<IActionResult> AddItems([FromBody] List<BackpackItem> items)
         {
-            
-            return Ok();
+            return await Task.FromResult(Ok());
         }
     }
 }

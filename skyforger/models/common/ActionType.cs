@@ -9,7 +9,7 @@ namespace skyforger.models.common
         Move,
         Round,
         Rounds,
-        Full_Round,
+        FullRound,
         Second,
         Seconds,
         Minute,
@@ -28,6 +28,6 @@ namespace skyforger.models.common
         Decades,
         Century,
         Centuries,
-        See_Text
+        SeeText
     }
 }

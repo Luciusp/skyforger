@@ -8,6 +8,6 @@ namespace skyforger.models.common
         Short,
         Medium,
         Long,
-        See_Text
+        SeeText
     }
 }

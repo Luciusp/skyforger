@@ -2,7 +2,7 @@
 
 namespace skyforger.Migrations.Backpacks
 {
-    public partial class backpacksinitialcreate : Migration
+    public partial class BackpacksInitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

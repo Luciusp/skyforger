@@ -2,7 +2,7 @@
 
 namespace skyforger.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class SpellsInitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

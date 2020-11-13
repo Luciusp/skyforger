@@ -1,12 +1,6 @@
-using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using skyforger.models.player;
 
 namespace skyforger.Controllers
 {
@@ -21,7 +15,8 @@ namespace skyforger.Controllers
         
         public async Task<IActionResult> Index()
         {
-            return View();
+            _logger.LogInformation("Fetching CR Calc");
+            return await Task.FromResult(View());
         }
     }
 }

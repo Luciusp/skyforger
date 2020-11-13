@@ -1,10 +1,7 @@
-using System;
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using skyforger.models.common;
 
-namespace skyforger.models
+namespace skyforger.models.common.Mana
 {
     //[JsonConverter(typeof(StringEnumConverter))]
     public class ManaType

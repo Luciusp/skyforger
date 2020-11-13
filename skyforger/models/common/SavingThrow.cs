@@ -3,7 +3,7 @@ namespace skyforger.models.common
     public enum SavingThrow
     {
         Other,
-        See_Text,
+        SeeText,
         Fortitude,
         Will,
         Reflex

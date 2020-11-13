@@ -2,7 +2,7 @@
 
 namespace skyforger.Migrations.Players
 {
-    public partial class playersinitialcreate : Migration
+    public partial class PlayersInitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

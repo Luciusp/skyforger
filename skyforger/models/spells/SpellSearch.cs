@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc;
-using skyforger.models.common;
+using skyforger.models.common.Mana;
 
 namespace skyforger.models.spells
 {

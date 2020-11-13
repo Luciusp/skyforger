@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace skyforger.models.common
+namespace skyforger.models.common.Mana
 {
     public class ManaClass
     {

@@ -1,24 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using AngleSharp.Html.Parser;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using skyforger.models;
-using skyforger.models.common;
-using skyforger.models.spells;
 using skyforger.Utilities;
 
 namespace skyforger.Controllers
@@ -30,7 +17,6 @@ namespace skyforger.Controllers
         private readonly ILogger<PortalSync> _logger;
         private readonly IHttpClientFactory _httpfactory;
         private readonly IConfiguration _config;
-        private List<Error> _errors = new List<Error>();
         private readonly SpellsContext _sc;
 
         public PortalSync(ILogger<PortalSync> logger, IHttpClientFactory httpfactory, IConfiguration config,
@@ -92,19 +78,7 @@ namespace skyforger.Controllers
                         continue;
 
                     var spelluri = $"{_config["ObsidianPortal:BaseURI"]}{spellendpoint}";
-                    
-                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/sign";
-                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/detect-fire";
-                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/lesser-orb-of-cold";
-                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/gate";
-                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wiki_pages/clone";
-                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/forced-repentance";
-                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/martyrs-last-blessing";
-                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/murderous-command";
-                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/lightning-ring";
-                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/enhance-familiar";
-                    //var spelluri = "https://skies-of-glass.obsidianportal.com/wikis/lookingglass";
-                    
+
                     var existingentity = _sc.Spells.FirstOrDefault(t => t.SpellUri == spelluri);
                     if (existingentity != null)
                         continue;

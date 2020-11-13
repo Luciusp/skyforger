@@ -7,7 +7,7 @@ namespace skyforger.models.spells
         Somatic,
         Material,
         Focus,
-        Divine_Focus,
-        See_Text
+        DivineFocus,
+        SeeText
     }
 }

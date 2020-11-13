@@ -8,8 +8,8 @@ using skyforger.models.player;
 namespace skyforger.Migrations.Players
 {
     [DbContext(typeof(PlayersContext))]
-    [Migration("20200831021338_players-initialcreate")]
-    partial class playersinitialcreate
+    [Migration("20201113182825_PlayersInitialCreate")]
+    partial class PlayersInitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

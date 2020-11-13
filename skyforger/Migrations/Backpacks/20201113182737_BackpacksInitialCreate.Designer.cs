@@ -8,8 +8,8 @@ using skyforger.models.backpacks;
 namespace skyforger.Migrations.Backpacks
 {
     [DbContext(typeof(BackpacksContext))]
-    [Migration("20200831044013_backpacks-initialcreate")]
-    partial class backpacksinitialcreate
+    [Migration("20201113182737_BackpacksInitialCreate")]
+    partial class BackpacksInitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -15,7 +15,7 @@ namespace skyforger.models.spells
         Necromancy,
         Sangromancy,
         [Display(Name = "See Text")]
-        See_Text,
+        SeeText,
         Transmutation,
         Universal
     }
