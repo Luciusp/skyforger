@@ -1,5 +1,4 @@
-@using skyforger.Controllers
-@using skyforger.models.common
+@using skyforger.models.common.Mana
 @using skyforger.models.spells
 @model skyforger.models.spells.SpellSearch
 @{
@@ -8,6 +7,8 @@
 <!DOCTYPE html>
 
 <html>
+<head>
+</head>
 <body>
 <div class="d-flex justify-content-center">
     @using (Html.BeginForm("Index", "Spells", FormMethod.Post))
@@ -27,11 +28,9 @@
         @Html.LabelFor(t => t.SpellSchool, new {@class = "ss-form-label"})
         @Html.DropDownListFor(t => t.SpellSchool, Html.GetEnumSelectList<SpellSchoolEnum>(),
             "Any", new {@class = "form-control ss-form-entry"})
-        ;
         @Html.LabelFor(t => t.SpellSubSchool)
         @Html.DropDownListFor(t => t.SpellSubSchool, Html.GetEnumSelectList<SpellSubSchoolEnum>(),
             "Any", new {@class = "form-control ss-form-entry"})
-        ;
         @Html.LabelFor(t => t.SpellDescriptor)
         @Html.DropDownListFor(t => t.SpellDescriptor, Html.GetEnumSelectList<SpellDescriptorEnum>(),
             "Any", new {@class = "form-control ss-form-entry"})

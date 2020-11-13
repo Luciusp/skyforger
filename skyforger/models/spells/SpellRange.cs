@@ -6,6 +6,6 @@ namespace skyforger.models.spells
     {
         public RangeType Range { get; set; }
         public string OtherRange { get; set; }
-        public int increment { get; set; }
+        public int Increment { get; set; }
     }
 }

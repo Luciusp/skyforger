@@ -1,8 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using skyforger.models.spells;
 
-namespace skyforger.models
+namespace skyforger.models.spells
 {
     public class SpellDescriptor
     {

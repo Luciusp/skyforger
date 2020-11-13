@@ -19,7 +19,8 @@ namespace skyforger.Controllers
         [Route("")]
         public async Task<IActionResult> Status()
         {
-            return Ok();
+            _logger.LogInformation("Status: OK");
+            return await Task.FromResult(Ok());
         }
     }
 }

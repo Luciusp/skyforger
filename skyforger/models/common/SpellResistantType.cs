@@ -4,6 +4,6 @@ namespace skyforger.models.common
     {
         Yes,
         No,
-        See_Text
+        SeeText
     }
 }

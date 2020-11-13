@@ -7,7 +7,7 @@ namespace skyforger.models.spells
         //Catch-all
         None,
         [Display(Name = "See Text")]
-        See_Text,
+        SeeText,
         
         //Conjuration
         Calling,

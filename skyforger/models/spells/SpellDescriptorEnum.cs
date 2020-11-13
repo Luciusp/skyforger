@@ -25,12 +25,12 @@ namespace skyforger.models.spells
         Good,
         Glyph,
         [Display(Name = "Language Dependent")]
-        Language_Dependent,
+        LanguageDependent,
         Lawful,
         Light,
         Maneuver,
         [Display(Name = "Mind Affecting")]
-        Mind_Affecting,
+        MindAffecting,
         Pain,
         Poison,
         Profane,
@@ -38,7 +38,7 @@ namespace skyforger.models.spells
         Sacred,
         Scrying,
         [Display(Name = "See Text")]
-        See_Text,
+        SeeText,
         Shadow,
         Sonic,
         Spirit,

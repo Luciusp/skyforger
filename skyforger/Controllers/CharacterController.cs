@@ -20,7 +20,8 @@ namespace skyforger.Controllers
         // GET
         public async Task<IActionResult> Index()
         {
-            return View();
+            _logger.LogInformation("Fetching characters");
+            return await Task.FromResult(View());
         }
     }
 }

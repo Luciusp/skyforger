@@ -1,9 +1,4 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using skyforger.models.classes;
-using skyforger.models.common;
-using skyforger.models.common.Feats;
-using skyforger.models.creatures;
 
 namespace skyforger.models.player
 {

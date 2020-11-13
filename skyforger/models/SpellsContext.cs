@@ -1,6 +1,6 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using skyforger.models.common;
+using skyforger.models.common.Mana;
 using skyforger.models.spells;
 
 namespace skyforger.models

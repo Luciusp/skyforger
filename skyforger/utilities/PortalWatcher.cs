@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -7,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using CG.Web.MegaApiClient;
 using Microsoft.Extensions.DependencyInjection;
 using skyforger.models;
 
@@ -32,8 +35,8 @@ namespace skyforger.Utilities
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Timed portal watcher is starting...");
+            MegaSyncOperation(Utilities.MegaSyncOperation.Download, cancellationToken).Wait(cancellationToken);
             _portalwatchtimer = new Timer(async (e) => { await UpdateSync(); },null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
-            
             return Task.CompletedTask;
         }
 
@@ -50,11 +53,10 @@ namespace skyforger.Utilities
         }
         
         //performs sync of updated spells. List fetched from Obsidian Portal's Stream
-        public async Task UpdateSync()
+        private async Task UpdateSync()
         {
             try
             {
-
                 using var scope = _scopefactory.CreateScope();
                 var sfc = scope.ServiceProvider.GetRequiredService<SpellsContext>();
 
@@ -92,7 +94,6 @@ namespace skyforger.Utilities
 
                     //transpose the spell as normal to pick up the changes
                     var spellscraperesult = await SpellScraper.TransposeSpell(spellcontent, spelluri);
-
                     if (spellscraperesult.spell.Valid || !spellscraperesult.errors.Any())
                     {
                         try
@@ -110,11 +111,70 @@ namespace skyforger.Utilities
                         }
                     }
                 }
+                var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                if (environment != null && environment.ToLower() != "development")
+                    await MegaSyncOperation(Utilities.MegaSyncOperation.Upload, CancellationToken.None);
             }
             catch (Exception e)
             {
                 _logger.LogError("Unable to complete watcher request", e);
+                Console.WriteLine(e.Message);
             }
+        }
+
+        private async Task MegaSyncOperation(MegaSyncOperation op, CancellationToken cancellationtoken)
+        {
+            var client = new MegaApiClient();
+            await client.LoginAsync(_config["MEGA_ID"], _config["MEGA_SECRET"]);
+            var nodes = await client.GetNodesAsync();
+            //need the root node because that's what's NOT in the recycle bin
+            var enumerable = nodes.ToList();
+            var root = enumerable.Single(x => x.Type == NodeType.Root);
+
+            switch (op)
+            {
+                case Utilities.MegaSyncOperation.Download:
+                    await DownloadDbs(client, enumerable, root, cancellationtoken);
+                    break;
+                case Utilities.MegaSyncOperation.Upload:
+                    await UploadDbs(client, enumerable, root);
+                    break;
+            }
+            //I think there's an issue with logging in/out in quick succession in an async environment.
+            //This check prevents an error "not logged in"
+            if(client.IsLoggedIn)
+                await client.LogoutAsync();
+        }
+
+        private async Task DownloadDbs(MegaApiClient client, IEnumerable<INode> nodes, INodeInfo root, CancellationToken cancellationtoken)
+        {
+            foreach (var node in nodes)
+            {
+                if (node.Name == null || node.ParentId != root.Id) continue;
+                _logger.LogInformation($"Downloading {node.Name}...");
+                if(File.Exists(node.Name)) File.Delete(node.Name);
+                await client.DownloadFileAsync(node, node.Name, new Progress<double>(), cancellationtoken);
+            }
+
+            await client.LogoutAsync();
+        }
+        
+        //Downloads dbs from Mega on boot
+        
+        //Syncs dbs to mega after every db update
+        private async Task UploadDbs(MegaApiClient client, IEnumerable<INode> nodes, INode root)
+        {
+            foreach (var node in nodes)
+            {
+                if (node.Name == null || node.ParentId != root.Id) continue;
+                _logger.LogInformation($"Uploading {node.Name}...");
+                
+                //by default mega doesn't overwrite files based on name. Instead, the file will be moved to the trash
+                //where it will remain for 30 days before being cleared out. This gives me bootleg versioning
+                await client.DeleteAsync(node);
+                await client.UploadFileAsync(node.Name, root, new Progress<double>());
+            }
+            await client.LogoutAsync();
         }
     }
 }

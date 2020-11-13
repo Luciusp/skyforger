@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using skyforger.models;
 using skyforger.models.common;
+using skyforger.models.common.Mana;
 using skyforger.models.spells;
 
 namespace skyforger.Utilities
@@ -52,7 +53,7 @@ namespace skyforger.Utilities
              */
             var spellinforegex = new Regex(@"<div itemprop=\'text\'>(.|\n)*?<\/div>");
             var spellinfo = spellinforegex.Match(spellhtml).Value;
-            var spelldetails = new List<string>();
+            List<string> spelldetails;
             try
             {
                 spelldetails = spellinfo.Split("<ul>")[1].Split("<li>")
@@ -109,7 +110,7 @@ namespace skyforger.Utilities
                             }
                             catch (Exception e)
                             {
-                                var errlist = new List<string>() {"Unable to parse subschool"};
+                                var errlist = new List<string>() {"Unable to parse subschool", e.Message};
                                 var err = new Error("spell", spelluri, errlist);
                                 errors.Add(err);
                                 spell.Valid = false;
@@ -131,12 +132,12 @@ namespace skyforger.Utilities
                             try
                             {
                                 spell.Descriptor.Add(new SpellDescriptor(
-                                    (SpellDescriptorEnum) Enum.Parse<SpellDescriptorEnum>(
-                                        descriptorentry.Trim().Replace(" ", "_").Replace("-", "_"), true)));
+                                    Enum.Parse<SpellDescriptorEnum>(
+                                        descriptorentry.Trim().Replace(" ", "").Replace("-", ""), true)));
                             }
                             catch (Exception e)
                             {
-                                var errlist = new List<string>() {"Unable to parse spell descriptor"};
+                                var errlist = new List<string>() {"Unable to parse spell descriptor", e.Message};
                                 var err = new Error("spell", spelluri, errlist);
                                 errors.Add(err);
                             }
@@ -210,7 +211,7 @@ namespace skyforger.Utilities
                         {
                             case "df":
                             case "divinefocus":
-                                spell.Components.Add(new SpellComponent(SpellComponentEnum.Divine_Focus));
+                                spell.Components.Add(new SpellComponent(SpellComponentEnum.DivineFocus));
                                 break;
                             case "f":
                             case "focus":
@@ -223,7 +224,7 @@ namespace skyforger.Utilities
                             case "focus/df":
                             case "focus/divinefocus":
                                 spell.Components.Add(new SpellComponent(SpellComponentEnum.Focus));
-                                spell.Components.Add(new SpellComponent(SpellComponentEnum.Divine_Focus));
+                                spell.Components.Add(new SpellComponent(SpellComponentEnum.DivineFocus));
                                 break;
                         }
 
@@ -270,7 +271,7 @@ namespace skyforger.Utilities
 
                     //some spells are mono + multi or mono + diverse. Mono isn't a tag, so that will need to be calculated elsewhere
                     var othertag = tags[i].Value.Replace("data-tag=", "").Replace("\"", "")
-                        .Replace("-", "_").Replace(" ", "_").ToLower();
+                        .Replace("-", "").Replace(" ", "").ToLower();
 
                     var manaclassexists = Enum.TryParse(othertag, true,
                         out ManaClassEnum manaclass);
@@ -328,8 +329,7 @@ namespace skyforger.Utilities
                 var actionreg = new Regex(pattern);
                 var actionmatches = actionreg.Matches(actioninfo);
 
-                int anytimefactor = 0;
-                var timefactorexists = actioninfo.Split(" ").Any(t => Int32.TryParse(t, out anytimefactor));
+                var timefactorexists = actioninfo.Split(" ").Any(t => Int32.TryParse(t, out _));
                 if (!timefactorexists && actioninfo.ToLower() != "see text")
                 {
                     var errlist = new List<string>() {"Missing timefactor action info"};
@@ -465,7 +465,7 @@ namespace skyforger.Utilities
                     result.Append("|");
             }
 
-            return result.ToString();
+            return await Task.FromResult(result.ToString());
         }
     }
 }

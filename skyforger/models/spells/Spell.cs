@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using skyforger.models.common;
+using skyforger.models.common.Mana;
 
 namespace skyforger.models.spells
 {

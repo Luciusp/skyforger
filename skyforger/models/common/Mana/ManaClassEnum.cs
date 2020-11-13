@@ -1,12 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace skyforger.models.common
+namespace skyforger.models.common.Mana
 {
     public enum ManaClassEnum
     {
         Mono,
         [Display(Name = "Multi-Mana")]
-        Multi_mana,
+        MultiMana,
         Diverse
     }
 }
