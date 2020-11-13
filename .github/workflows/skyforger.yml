@@ -21,17 +21,13 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-      
-  build-docker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build image
-      - run: docker build -f ./skyforger/Dockerfile.skyforger . -t skyforger
-      - name: Log into GHCR
-      - run: echo ${{ secrets.PAT }} | docker login ghcr.io -u luciusp --password-stdin
-      - name: Tag and push image
-      - run: docker tag "skyforger:latest" "ghcr.io/luciusp/skyforger:$GITHUB_RUN_ID"
-      - run: docker push "ghcr.io/luciusp/skyforger:$GITHUB_RUN_ID"
-      - run: docker tag "skyforger:latest" "ghcr.io/luciusp/skyforger:latest"
-      - run: docker push "ghcr.io/luciusp/skyforger:latest"
+    - name: Build image
+      run: docker build -f ./skyforger/Dockerfile.skyforger . -t skyforger
+    - name: Log into GHCR
+      run: echo ${{ secrets.PAT }} | docker login ghcr.io -u luciusp --password-stdin
+    - name: Tag and push image
+      run: | 
+        docker tag "skyforger:latest" "ghcr.io/luciusp/skyforger:$GITHUB_RUN_ID"
+        docker push "ghcr.io/luciusp/skyforger:$GITHUB_RUN_ID"
+        docker tag "skyforger:latest" "ghcr.io/luciusp/skyforger:latest"
+        docker push "ghcr.io/luciusp/skyforger:latest" 
