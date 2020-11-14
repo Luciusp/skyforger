@@ -1,34 +1,46 @@
-name: skyforger
+name: merge
 
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
-  build-deploy:
+  build-test:
+
+    name: Verify Build
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
-    - name: Install Tree
-      run: |
-        sudo apt-get install tree
-        tree -d .
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.301
+
     - name: Install dependencies
       run: dotnet restore
+
     - name: Build
       run: dotnet build --configuration Release --no-restore
+
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-    - name: Build image
+      
+  docker-build-deploy:
+
+    name: Docker Build and Push
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build Docker Image
       run: docker build -f ./skyforger/Dockerfile.skyforger ./skyforger -t skyforger
+
     - name: Log into GHCR
       run: echo ${{ secrets.PAT }} | docker login ghcr.io -u luciusp --password-stdin
+
     - name: Tag and push image
       run: | 
         docker tag "skyforger:latest" "ghcr.io/luciusp/skyforger:$GITHUB_RUN_ID"
