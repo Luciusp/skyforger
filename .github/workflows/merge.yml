@@ -45,9 +45,9 @@ jobs:
 
     - name: Log into GHCR Remotely
       run: |
-        echo $CA_PEM > ca.pem
-        echo $CERT_PEM > cert.pem
-        echo $KEY_PEM > key.pem
+        echo $CA_PEM > /home/runner/.docker/ca.pem
+        echo $CERT_PEM > /home/runner/.docker/cert.pem
+        echo $KEY_PEM > /home/runner/.docker/key.pem
         echo $PAT | docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify login ghcr.io -u luciusp --password-stdin
       env:
         CA_PEM: ${{ secrets.CA_PEM }}
