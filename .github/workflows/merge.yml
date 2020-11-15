@@ -45,8 +45,8 @@ jobs:
 
     - name: Register known_hosts
       run: |
-        sudo mkdir ~/.ssh/
-        'sudo echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts'
+        sudo mkdir /home/runner/.ssh/
+        'sudo echo "$KNOWN_HOSTS" > /home/runner/.ssh/known_hosts'
       env:
         KNOWN_HOSTS: ${{ secrets.DOCKER_SSH_KNOWN_HOSTS }}
 
