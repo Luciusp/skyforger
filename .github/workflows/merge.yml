@@ -47,7 +47,7 @@ jobs:
       run: echo ${{ secrets.PAT }} | docker login ghcr.io -u luciusp --password-stdin
 
     - name: Generate Stackfile
-      run: docker-compose config > docker-stack.yml
+      run: docker-compose config > stack.yml
       env:
         AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
         AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
