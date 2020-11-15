@@ -45,10 +45,10 @@ jobs:
 
     - name: Log into GHCR Remotely
       run: |
-      echo ${{ secrets.CA_PEM }} > ca.pem
-      echo ${{ secrets.CERT_PEM }} > cert.pem
-      echo ${{ secrets.KEY_PEM }} > key.pem
-      echo $PAT | docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ./ca.pem --tlscert ./cert.pem --tlskey ./key.pem login ghcr.io -u luciusp --password-stdin
+        echo ${{ secrets.CA_PEM }} > ca.pem
+        echo ${{ secrets.CERT_PEM }} > cert.pem
+        echo ${{ secrets.KEY_PEM }} > key.pem
+        echo $PAT | docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ./ca.pem --tlscert ./cert.pem --tlskey ./key.pem login ghcr.io -u luciusp --password-stdin
 
     - name: Generate Stackfile
       run: docker-compose config > docker-stack.yml
