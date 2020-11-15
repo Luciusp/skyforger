@@ -44,7 +44,9 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Register known_hosts
-      run: 'echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts'
+      run: |
+      sudo mkdir ~/.ssh/
+      'echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts'
       env:
         KNOWN_HOSTS: ${{ secrets.DOCKER_SSH_KNOWN_HOSTS }}
 
