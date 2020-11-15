@@ -14,7 +14,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Log into GHCR Remotely
-      run: echo $PAT | docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ${{ secrets.CA_PEM }} --tlscert ${{ sercrets.CERT_PEM }} --tlskey ${{ secrets.KEY_PEM }} login ghcr.io -u luciusp --password-stdin
+      run: echo $PAT | docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ${{ secrets.CA_PEM }} --tlscert ${{ secrets.CERT_PEM }} --tlskey ${{ secrets.KEY_PEM }} login ghcr.io -u luciusp --password-stdin
 
     - name: Generate Stackfile
       run: docker-compose config > docker-stack.yml
@@ -27,4 +27,4 @@ jobs:
         MEGA_ID: ${{ secrets.MEGA_ID }}
 
     - Name: Deploy
-      run: docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ${{ secrets.CA_PEM }} --tlscert ${{ sercrets.CERT_PEM }} --tlskey ${{ secrets.KEY_PEM }} stack deploy --with-registry-auth -c docker-stack.yml skyforger
+      run: docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ${{ secrets.CA_PEM }} --tlscert ${{ secrets.CERT_PEM }} --tlskey ${{ secrets.KEY_PEM }} stack deploy --with-registry-auth -c docker-stack.yml skyforger
