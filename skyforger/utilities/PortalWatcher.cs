@@ -150,7 +150,7 @@ namespace skyforger.Utilities
         {
             foreach (var node in nodes)
             {
-                if (node.Name == null || node.ParentId != root.Id) continue;
+                if (node.Name == null || node.ParentId != root.Id || node.Type != NodeType.File) continue;
                 _logger.LogInformation($"Downloading {node.Name}...");
                 if(File.Exists(node.Name)) File.Delete(node.Name);
                 await client.DownloadFileAsync(node, node.Name, new Progress<double>(), cancellationtoken);

@@ -1,0 +1,30 @@
+name: deploy
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+
+    name: Deploy to Docker Swarm
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Log into GHCR Remotely
+      run: echo $PAT | docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ${{ secrets.CA_PEM }} --tlscert ${{ sercrets.CERT_PEM }} --tlskey ${{ secrets.KEY_PEM }} login ghcr.io -u luciusp --password-stdin
+
+    - name: Generate Stackfile
+      run: docker-compose config > docker-stack.yml
+      env:
+        AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+        AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+        ASPNETCORE_ENVIRONMENT: ${{ secrets.ASPNETCORE_ENVIRONMENT }}
+        MEGA_SECRET: ${{ secrets.MEGA_SECRET }}
+        AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+        MEGA_ID: ${{ secrets.MEGA_ID }}
+
+    - Name: Deploy
+      run: docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ${{ secrets.CA_PEM }} --tlscert ${{ sercrets.CERT_PEM }} --tlskey ${{ secrets.KEY_PEM }} stack deploy --with-registry-auth -c docker-stack.yml skyforger
