@@ -45,15 +45,17 @@ jobs:
 
     - name: Log into GHCR Remotely
       run: |
-        echo $CA_PEM > /home/runner/.docker/ca.pem
-        echo $CERT_PEM > /home/runner/.docker/cert.pem
-        echo $KEY_PEM > /home/runner/.docker/key.pem
-        for f in /home/runner/.docker/*.pem; do echo $f && cat $f; done
-        echo $PAT | docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify login ghcr.io -u luciusp --password-stdin
+        apt install megatools
+        echo "[Login]
+        Username = ${MEGA_ID}
+        Password = ${MEGA_SECRET}" > .megarc
+        megaget /Root/ssl/ca.pem
+        megaget /Root/ssl/cert.pem
+        megaget /Root/ssl/key.pem
+        echo $PAT | docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ./ca.pem --tlscert ./cert.pem --tlskey ./key.pem login ghcr.io -u luciusp --password-stdin
       env:
-        CA_PEM: ${{ secrets.CA_PEM }}
-        CERT_PEM: ${{ secrets.CERT_PEM }}
-        KEY_PEM: ${{ secrets.KEY_PEM }}
+        MEGA_SECRET: ${{ secrets.MEGA_SECRET }}
+        MEGA_ID: ${{ secrets.MEGA_ID }}
 
     - name: Generate Stackfile
       run: docker-compose config > docker-stack.yml
@@ -66,4 +68,4 @@ jobs:
         MEGA_ID: ${{ secrets.MEGA_ID }}
 
     - name: Deploy
-      run: docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ${{ secrets.CA_PEM }} --tlscert ${{ secrets.CERT_PEM }} --tlskey ${{ secrets.KEY_PEM }} stack deploy --with-registry-auth -c docker-stack.yml skyforger
+      run: docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ./ca.pem --tlscert ./cert.pem --tlskey ./key.pem --tlskey ${{ secrets.KEY_PEM }} stack deploy --with-registry-auth -c docker-stack.yml skyforger
