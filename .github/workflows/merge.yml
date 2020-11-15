@@ -45,7 +45,7 @@ jobs:
 
     - name: Log into GHCR Remotely
       run: |
-        apt install megatools
+        sudo apt-get install megatools
         echo "[Login]
         Username = ${MEGA_ID}
         Password = ${MEGA_SECRET}" > .megarc
