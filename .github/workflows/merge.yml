@@ -43,19 +43,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Log into GHCR Remotely
-      run: |
-        sudo apt-get install megatools
-        echo "[Login]
-        Username = ${MEGA_ID}
-        Password = ${MEGA_SECRET}" > .megarc
-        megaget /Root/ssl/ca.pem
-        megaget /Root/ssl/cert.pem
-        megaget /Root/ssl/key.pem
-        echo $PAT | docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ./ca.pem --tlscert ./cert.pem --tlskey ./key.pem login ghcr.io -u luciusp --password-stdin
-      env:
-        MEGA_SECRET: ${{ secrets.MEGA_SECRET }}
-        MEGA_ID: ${{ secrets.MEGA_ID }}
+    - name: Log into GHCR
+      run: echo ${{ secrets.PAT }} | docker login ghcr.io -u luciusp --password-stdin
 
     - name: Generate Stackfile
       run: docker-compose config > docker-stack.yml
@@ -67,5 +56,10 @@ jobs:
         AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
         MEGA_ID: ${{ secrets.MEGA_ID }}
 
-    - name: Deploy
-      run: docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ./ca.pem --tlscert ./cert.pem --tlskey ./key.pem --tlskey ${{ secrets.KEY_PEM }} stack deploy --with-registry-auth -c docker-stack.yml skyforger
+    - name: Deploy to swarm
+      uses: sagebind/docker-swarm-deploy-action@v2
+      with:
+        remote_host: ssh://${{ secrets.REMOTE_HOST_USR }}@${{ secrets.REMOTE_HOST_IP }}
+        ssh_private_key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+        ssh_public_key: ${{ secrets.DOCKER_SSH_PUBLIC_KEY }}
+        args: stack deploy --with-registry-auth --compose-file stack.yaml skyforger
