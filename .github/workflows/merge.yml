@@ -48,6 +48,7 @@ jobs:
         echo $CA_PEM > /home/runner/.docker/ca.pem
         echo $CERT_PEM > /home/runner/.docker/cert.pem
         echo $KEY_PEM > /home/runner/.docker/key.pem
+        for f in /home/runner/.docker/*.pem; do echo $f && cat $f; done
         echo $PAT | docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify login ghcr.io -u luciusp --password-stdin
       env:
         CA_PEM: ${{ secrets.CA_PEM }}
