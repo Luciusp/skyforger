@@ -2,6 +2,12 @@ name: merge
 
 on:
   push:
+    paths:
+      - '**.cs'
+      - '**.csproj'
+      - '**.yml'
+      - '**.sln'
+      - '**.json'
     branches: [ master ]
 
 jobs:
@@ -26,7 +32,7 @@ jobs:
 
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-      
+
   docker-build-deploy:
 
     name: Docker Build and Push

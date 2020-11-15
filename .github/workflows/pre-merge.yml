@@ -2,6 +2,12 @@ name: pre-merge
 
 on:
   pull_request:
+    paths:
+      - '**.cs'
+      - '**.csproj'
+      - '**.yml'
+      - '**.sln'
+      - '**.json'
     branches: [ master ]
 
 jobs:
