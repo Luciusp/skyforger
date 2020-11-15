@@ -11,27 +11,6 @@ on:
     branches: [ master ]
 
 jobs:
-  build-test:
-
-    name: Verify Build
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.301
-
-    - name: Install dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
 
   docker-build-deploy:
 
@@ -57,7 +36,7 @@ jobs:
   deploy:
 
     needs: docker-build-deploy
-    
+
     name: Deploy to Docker Swarm
     runs-on: ubuntu-latest
 
@@ -65,7 +44,11 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Log into GHCR Remotely
-      run: echo $PAT | docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ${{ secrets.CA_PEM }} --tlscert ${{ secrets.CERT_PEM }} --tlskey ${{ secrets.KEY_PEM }} login ghcr.io -u luciusp --password-stdin
+      run: |
+      echo ${{ secrets.CA_PEM }} > ca.pem
+      echo ${{ secrets.CERT_PEM }} > cert.pem
+      echo ${{ secrets.KEY_PEM }} > key.pem
+      echo $PAT | docker -H ${{ secrets.REMOTE_HOST_IP }} --tlsverify --tlscacert ./ca.pem --tlscert ./cert.pem --tlskey ./key.pem login ghcr.io -u luciusp --password-stdin
 
     - name: Generate Stackfile
       run: docker-compose config > docker-stack.yml
