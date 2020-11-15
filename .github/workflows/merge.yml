@@ -44,7 +44,9 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Register known_hosts
-      run: echo ${{ secrets.DOCKER_SSH_KNOWN_HOSTS }} > ~/.ssh/known_hosts
+      run: 'echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts'
+      env:
+        KNOWN_HOSTS: ${{ secrets.DOCKER_SSH_KNOWN_HOSTS }}
 
     - name: Log into GHCR
       run: echo ${{ secrets.PAT }} | docker login ghcr.io -u luciusp --password-stdin
